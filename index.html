@@ -102,11 +102,26 @@ input{
 	-moz-border-radius:3px;
 }
 input.btn{
-	padding:6px;
+	padding:4px;
 	font-size:16px;
 	font-weight:bold;
 	color:#FFF;
 	background-color:#333;
+	border:solid #333 2px;
+	cursor:pointer;
+}
+input.btn:hover{
+	border-top:solid #555 2px;
+	border-left:solid #555 2px;
+	border-bottom:solid #000 2px;
+	border-right:solid #000 2px;
+}
+#data-data-form li{
+	padding:0px 0px 8px 0px;
+}
+#data-data-form input{
+	width:75px;
+	margin-right:8px;
 }
 .grad-grey{
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(#222));
@@ -121,7 +136,7 @@ input.btn{
 <body>
 <div id="navigation" class="">
 	<ul>
-		<li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="login">Login/Logout</li>
+		<li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="login">Login/Logout</li><li id="pending">Pending Changes</li>
 	</ul>	
 </div>
 <div id="content">
@@ -133,8 +148,11 @@ input.btn{
 				<li id="data-data">Data</li>
 			</ul>
 		</div>
-		<div class="inner" id="data-data-container">
-			
+		<div class="inner" id="data-data-container" style="display:none">
+			<form id="data-data-form">
+			<ul id="data-data-elements"></ul>
+			<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
+			</form>
 		</div>
 		<div class="inner" id="data-header-container" style="margin:0px auto;max-width:400px;">
 			<form id="data-form">
@@ -224,13 +242,33 @@ $(document).ready(function(){
 				});
 			});
 			
+			//add new data entries
+			$('#data-data-add').click(obj.htmlAddRecord);
+			
 			obj.restoreState();
 		},
 		htmlAddRecord : function(){
+			var $ul = $('#data-data-elements');
+			var id = $ul.children().length;
+
+			var newElsNames = ['snumber','sarea','distcode','L','M','H'];
+			
+			var $li = $(document.createElement('li'));
+			
+			for(x=0; x<6; x++){
+				var $temp = $(document.createElement('input'));
+				$temp.attr('id',newElsNames[x] + '-' + id).attr('class','round');
+				$li.append($temp);
+			}
+			$ul.append($li);	
+		},
+		//removes the record from local data store also
+		htmlRemoveRecord : function(id){
 		
 		},
-		htmlRemoveRecord : function(){
-		
+		//does not touch local data store
+		htmlRemoveAllRecords : function(){
+			$('#data-data-elements').empty();
 		},
 		saveCurrentRecords : function(){
 		
@@ -258,6 +296,9 @@ $(document).ready(function(){
 		},
 		localData : {
 			records : {}
+		},
+		dataMap : {
+			//a map from data map data to 
 		}
 	}
 	navigation.init();
