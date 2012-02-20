@@ -320,9 +320,19 @@ var dataMap = {
 			},
 		},
 	};
+	
+	/**
+	 * A wrapper for all functions
+	 */
 	var main = {
+		//reference to the navigation
 		$navs: null,
+		
+		//reference to the most recently clicked
+		//navigation tab
 		$current: null,
+		
+		//called on document load
 		init:function(){
 			var obj = this;
 			obj.$navs = $('#navigation li');
@@ -377,9 +387,18 @@ var dataMap = {
 				this.$htmlDD.append($temp);
 			}
 			
+			//build the Delete button
+			this.$htmlDelete = $(document.createElement('input'))
+				.attr('class','round btn')
+				.val('Delete').attr('type','button');
+			
 			obj.restoreState();
 		},
+		//HTML drop down list for data
 		$htmlDD : null,
+		$htmlDelete : null,
+		
+		//add a record for input to the data
 		htmlAddRecord : function(){
 			var $ul = $('#data-data-elements');
 			var id = $ul.children().length;
@@ -397,25 +416,41 @@ var dataMap = {
 				$temp.attr('id',newElsNames[x] + '-' + id).attr('class','round');
 				$li.append($temp);
 			}
+			
+			//add the delete
+			$li.append(main.$htmlDelete.clone().click(function(){$(this).parent().remove();}));
+			
 			$ul.append($li);
 			return $li;
 		},
+		
+		/**
+		 * Add a record for data, and set record values
+		 * @param code int The corresponding code from dataMap.code
+		 * @param l The low value
+		 * @param m The medium value
+		 * @param h The high value
+		 */
 		htmlAddRecordData : function(code,l,m,h){
 			var $li = this.htmlAddRecord();
 			$li.children().first().val(code).next().val(l).next().val(m).next().val(h);
 		},
+		
 		//removes the record from local data store also
 		htmlRemoveRecord : function(id){
 			var wrapper = '#data-entry-'+id;
 			var $ul = $('#data-data-elements').find(wrapper).detach();
 		},
+		
 		//does not touch local data store
 		htmlRemoveAllRecords : function(){
 			$('#data-data-elements').empty();
 		},
+		
 		saveCurrentRecords : function(){
 		
 		},
+		
 		restoreState:function(){
 			//get the data
 			if(typeof sessionStorage.sessionData == 'string'){
@@ -476,7 +511,7 @@ var dataMap = {
 	  }]
 	});
 	layer.setMap(map);
-	
+	layer.
 	infowindow = new google.maps.InfoWindow({
 		content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
 	});
