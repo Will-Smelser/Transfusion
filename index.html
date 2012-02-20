@@ -362,6 +362,10 @@ var dataMap = {
 				$('#data-header').click();
 			});
 			
+			//specific click event for #map
+			//to fix some loading issues
+			$('#map-container').css('width','99%').css('width','100%');
+			
 			//add new data entries
 			$('#data-data-add').click(obj.htmlAddRecord);
 			
@@ -516,7 +520,6 @@ var dataMap = {
 		});
 		
 	});
-	window.X = [];
 });
 </script>
 
