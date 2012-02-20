@@ -49,7 +49,7 @@ body,html,#content{
 #navigation li:hover{
 	background-color:#333;
 }
-#map-container,#data-container,#login-container{
+#map-container,#data-container,#login-container,#pending-container{
 	width:100%;
 	height:100%;
 	margin-top:35px
@@ -88,14 +88,14 @@ form .title{
 	line-height:16px;
 	width:125px;
 }
-input{
-	padding:8px;
+input, select{
 	font-size:14px;
 	color:#FFF;
 	background-color:#AAA;
 	border:none;
 	font-weight:bold;
 	width:125px;
+	height:30px;
 }
 .round{
 	border-radius:3px;
@@ -119,9 +119,12 @@ input.btn:hover{
 #data-data-form li{
 	padding:0px 0px 8px 0px;
 }
-#data-data-form input{
+#data-data-form input, select{
 	width:75px;
 	margin-right:8px;
+}
+#data-data-form select{
+	width:150px;
 }
 .grad-grey{
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(#222));
@@ -130,13 +133,27 @@ input.btn:hover{
 	background-image: -ms-linear-gradient(top, #CCC, #222);
 	background-image: -o-linear-gradient(top, #CCC, #222);
 }
+
+.infoWindow input{
+	margin-top:10px;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	cursor:pointer;
+	
+	border-right:solid transparent 2px;
+	border-bottom:solid transparent 2px;
+}
+.infoWindow input:hover{
+	border-right:solid black 2px;
+	border-bottom:solid black 2px;
+}
 </style>
 
 </head>
 <body>
 <div id="navigation" class="">
 	<ul>
-		<li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="login">Login/Logout</li><li id="pending">Pending Changes</li>
+		<li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="login">Login/Logout</li>
 	</ul>	
 </div>
 <div id="content">
@@ -148,41 +165,38 @@ input.btn:hover{
 				<li id="data-data">Data</li>
 			</ul>
 		</div>
-		<div class="inner" id="data-data-container" style="display:none">
-			<form id="data-data-form">
-			<ul id="data-data-elements"></ul>
-			<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
-			</form>
-		</div>
 		<div class="inner" id="data-header-container" style="margin:0px auto;max-width:400px;">
 			<form id="data-form">
 				<div style="float:left;width:50%">
-					<div class="title">PID</div>
-					<input class="round" type="text" name="pid" />
+					<div class="title">SURVEY</div>
+					<input class="round" type="text" name="SURVEY" id="SURVEY" />
 					
 					<div class="title">FROM</div>
-					<input class="round" type="text" name="from" />
+					<input class="round" type="text" name="FROM" id="FROM" />
 					
 					<div class="title">TO</div>
-					<input class="round" type="text" name="to" />
+					<input class="round" type="text" name="TO" id="TO" />
 				</div>
 				
 				<div style="float:right;width:50%">
 					<input type="hidden" name="inspector" id="inspector" />
-									
-					<div class="title">Branch Use</div>
-					<input class="round" type="text" name="branchuse" />
 					
 					<div class="title">SECTION WIDTH</div>
-					<input class="round" type="text" name="sectionwidth" />
+					<input class="round" type="text" name="sectionwidth" id="WIDTH" />
 					
 					<div class="title">SECTION HEIGHT</div>
-					<input class="round" type="text" name="sectionheight" />
+					<input class="round" type="text" name="sectionheight" id="LENGTH" />
 					
 					<div class="title">DATE INSPECTED</div>
-					<input class="round" type="text" name="dateinspected" />
+					<input class="round" type="text" name="dateinspected" id="UPDATED_DATE" />
 				</div>
 				<div style="clear:both"></div>
+			</form>
+		</div>
+		<div class="inner" id="data-data-container" style="display:none">
+			<form id="data-data-form">
+			<ul id="data-data-elements"></ul>
+			<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
 			</form>
 		</div>
 	</div>
@@ -195,17 +209,118 @@ input.btn:hover{
 				<div class="title">PASSWORD</div>
 				<input class="round" type="password" name="password" />
 				
-				<div style="margin:8px;">
+				<div style="margin-top:8px;">
 					<input type="button" value="Login" class="round btn" />
 				</div>
 			</form>
 		</div>
 	</div>
+	<div class="inner" id="pending-container" style="display:none">
+		<h2>Pending Changes...</h2>
+	</div>
 </div>
+
+<div id="current_point" style="width:50px;height:50px;background-color:red;display:none;position:absolute;"></div>
 
 <script>
 $(document).ready(function(){
-	var navigation = {
+var dataMap = {
+		header : {
+		'FROM':'',
+		'TO':'',
+		'WIDTH':'',
+		'LENGTH':'',
+		'SURVEY':'',
+		'UPDATED_BY':'',
+		'UPDATED_DATE':'',
+		'geometry':'',
+		'COMMENT':'',
+		},
+		images : {
+		'SITE_IMAGE_1':'',
+		'SITE_IMAGE_2':'',
+		'SITE_IMAGE_3':'',
+		},
+		data : {
+			'ALLIG' : {
+				code : 1,
+				name : 'Alligator Cracking'
+			},
+			'BLEED' : {
+				code : 2,
+				name : 'Bleeding'
+			},
+			'BLOCK' : {
+				code : 3,
+				name : 'Block Cracking'
+			},
+			'BUMP' : {
+				code : 4,
+				name : 'Bumps and Sags'
+			},
+			'CORRU' : {
+				code : 5,
+				name : 'Corrugation',
+			},
+			'DEPRE' : {
+				code : 6,
+				name : 'Depression',
+			},
+			'EDGE' : {
+				code : 7,
+				name : 'Edge Cracking',
+			},
+			'REFLE' : {
+				code : 8,
+				name : 'Jt. Reflection Cracking'
+			},
+			'LANE' : {
+				code : 9,
+				name : 'Lane/Shoulder Drop Off'
+			},
+			'LONG' : {
+				code : 10,
+				name : 'Long &amp; Trans Cracking'
+			},
+			'PATCH' : {
+				code : 11,
+				name : 'Patch &amp; Util Cut Patching'
+			},
+			'POLIS' : {
+				code : 12,
+				name : 'Polished Aggregate'
+			},
+			'POTHO' : {
+				code : 13,
+				name : 'Potholes Count',
+			},
+			'BRCRO' : {
+				code : 14,
+				name : 'Railroad Crossing'
+			},
+			'RUTT' : {
+				code : 15,
+				name : 'Rutting'
+			},
+			'SHOV' : {
+				code : 16,
+				name : 'Shoving'
+			},
+			'SLIP' : {
+				code : 17,
+				name : 'Slippage Cracking'
+			},
+			'SWELL' : {
+				code : 18,
+				name : 'Swell'
+			},
+			'WEATH' : {
+				code : 19,
+				name : 'Weathering/Ravelling'
+			},
+		},
+	};
+	var main = {
 		$navs: null,
 		$current: null,
 		init:function(){
@@ -242,29 +357,53 @@ $(document).ready(function(){
 				});
 			});
 			
+			//specific click event for #data
+			$('#data').click(function(){
+				$('#data-header').click();
+			});
+			
 			//add new data entries
 			$('#data-data-add').click(obj.htmlAddRecord);
 			
+			//build HTML list
+			this.$htmlDD = $(document.createElement('select')).addClass('round');
+			for(var x in dataMap.data){
+				var $temp = $(document.createElement('option'));
+				$temp.val(dataMap.data[x].code).html(dataMap.data[x].name);
+				this.$htmlDD.append($temp);
+			}
+			
 			obj.restoreState();
 		},
+		$htmlDD : null,
 		htmlAddRecord : function(){
 			var $ul = $('#data-data-elements');
 			var id = $ul.children().length;
 
-			var newElsNames = ['snumber','sarea','distcode','L','M','H'];
+			var newElsNames = ['distcode','L','M','H'];
 			
 			var $li = $(document.createElement('li'));
+			$li.attr('id','data-entry-'+id);
 			
-			for(x=0; x<6; x++){
+			//create the DL
+			main.$htmlDD.clone().attr('id','distcode-'+id).appendTo($li);
+			
+			for(x=1; x<newElsNames.length; x++){
 				var $temp = $(document.createElement('input'));
 				$temp.attr('id',newElsNames[x] + '-' + id).attr('class','round');
 				$li.append($temp);
 			}
-			$ul.append($li);	
+			$ul.append($li);
+			return $li;
+		},
+		htmlAddRecordData : function(code,l,m,h){
+			var $li = this.htmlAddRecord();
+			$li.children().first().val(code).next().val(l).next().val(m).next().val(h);
 		},
 		//removes the record from local data store also
 		htmlRemoveRecord : function(id){
-		
+			var wrapper = '#data-entry-'+id;
+			var $ul = $('#data-data-elements').find(wrapper).detach();
 		},
 		//does not touch local data store
 		htmlRemoveAllRecords : function(){
@@ -301,25 +440,30 @@ $(document).ready(function(){
 			//a map from data map data to 
 		}
 	}
-	navigation.init();
+	main.init();
+	
+	
 	
 	var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
 	//var city = new google.maps.LatLng(-25, 133);
 	
 	map = new google.maps.Map(document.getElementById('map-container'), {
 	  center: city,
-	  zoom: 15,
+	  zoom: 17,
 	  mapTypeId: google.maps.MapTypeId.ROADMAP,
 	  zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
-	  streetViewControl: false
+	  streetViewControl: false,
+	  
 	});
 	
 	layer = new google.maps.FusionTablesLayer({
 	  query: {
 	    select: 'geometry',
-	    from: '2088364'
+	    from: '2088364',
+		//where: "LineID = '102'",
 	  },
 	  suppressInfoWindows: true,
+	  
 	  styles: [{
 	    polygonOptions: {
 	      fillColor: "#00FF00",
@@ -329,19 +473,50 @@ $(document).ready(function(){
 	});
 	layer.setMap(map);
 	
-	
-	
-	google.maps.event.addListener(layer, 'click', function(e) {
-		//alert(e.row['Distance'].value);
-		$('#key-data').html('');
-		for(var data in e.row){
-			var str = data + ': ' + e.row[data].value + '<br/>';
-			$('#key-data').append(str);
-		}
+	infowindow = new google.maps.InfoWindow({
+		content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
 	});
 	
-	$('#key').draggable({handle:'#title'});
+	var setInfoWindowClass = function(){
+			$infowindow = $(infowindow.b.f);
+			$infowindow.parent().parent().addClass('infoWindow');
+	}
 	
+	google.maps.event.addListener(layer, 'click', function(e) {
+		
+		infowindow.setPosition(e.latLng);
+		infowindow.open(map);
+		$(infowindow.b.f).addClass('infoWindow')
+			.find('#EditPoint').click(function(){
+			for(var key in dataMap.header){
+				try{
+					var entry = e.row[key].value;
+					var field = key;
+					$('#'+field).val(entry);
+				} catch(err){
+					//do nothing
+				}
+			}
+			
+			main.htmlRemoveAllRecords();
+			
+			for(var key in dataMap.data){
+				try{
+					var l = e.row[key + '_L'].value;
+					var m = e.row[key + '_M'].value;
+					var h = e.row[key + '_H'].value;
+					var code = dataMap.data[key].code;
+					
+					if(l > 0 || m > 0 || h > 0){
+						main.htmlAddRecordData(code,l,m,h);
+					}
+				} catch(err){/*do nothing*/}
+			}
+			$('#data').click();
+		});
+		
+	});
+	window.X = [];
 });
 </script>
 
