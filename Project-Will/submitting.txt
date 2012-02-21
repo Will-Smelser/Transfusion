@@ -1,0 +1,2 @@
+1. ftp file to Unix Filename
+2. submit c762ab paper fileName

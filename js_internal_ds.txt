@@ -1,0 +1,15 @@
+localStorage.orig = {
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+}
+
+localStorage.update = {
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+	LineID:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},
+}
+	
+UPDATE tablename (field1,field2,field3...,field36) VALUES (val1,va2,va3,...)

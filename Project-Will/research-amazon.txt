@@ -1,0 +1,65 @@
+
+=========
+Amazon S3
+=========
+
+http://aws.amazon.com/s3/#functionality
+
+== About ==
+Built with a minimal feature set
+Unlimited number of object of 1byte to 5 terabytes in size
+Each object is stored in a bucket
+Each bucket can be stored in various regions of the world optimized for specific requirements
+	- This results in optimized latency, minimize cost, address regulatory
+	- Regions : US West (Oregon), US West (Northern California), 
+	EU (Ireland), Asia Pacific (Singapore), Asia Pacific (Tokyo), 
+	South America (Sao Paulo), and GovCloud (US) Regions
+Can be private or public and based on specific users
+REST ability and SOAP interfaces
+Encrypted Communication Available
+HTTP and BitTorrent Protocol interfaces
+Deletions rules can be created
+Up to 1000 object can be deleted for each request
+
+== Security ==
+ACL - Access Control Lists
+AIM - Identity Access Management
+
+Permissions can be setup based on Buckets or By object basis
+
+HTTPS and multiple mechanisms for managing keys
+
+Logging options for who and when actions were performed
+
+== Reliability ==
+PUT and COPY operations synchronously store your data across multiple facilities 
+ before returning SUCCESS
+ 
+Reliability Backed by agreement - http://aws.amazon.com/s3-sla/
+
+99.999999999% durability and 99.99% availability of objects over a given year
+
+Designed to sustain the concurrent loss of data in two facilities
+
+Reduced Redundancy Storage (RRS)
+   Allows reduced cost by storing less critical data at lower levels of redundancy
+
+== Storage Costs (US) ==
+First 1 TB / month	$0.125 per GB	$0.093 per GB
+Next 49 TB / month	$0.110 per GB	$0.083 per GB
+Next 450 TB / month	$0.095 per GB	$0.073 per GB
+Next 500 TB / month	$0.090 per GB	$0.063 per GB
+Next 4000 TB / month	$0.080 per GB	$0.053 per GB
+Over 5000 TB / month	$0.055 per GB	$0.037 per GB
+
+== Request Costs (US) ==
+PUT, COPY, POST, or LIST Requests	$0.01 per  1,000 requests
+GET and all other Requests †	$0.01 per 10,000 requests
+
+== Data Transfer OUT (US) ==
+First 1 GB / month	$0.000 per GB
+Up to 10 TB / month	$0.120 per GB
+Next 40 TB / month	$0.090 per GB
+Next 100 TB / month	$0.070 per GB
+Next 350 TB / month	$0.050 per GB
+

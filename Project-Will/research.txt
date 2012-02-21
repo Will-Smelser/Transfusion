@@ -1,0 +1,5 @@
+
+=========
+Links
+=========
+http://blog.dantup.com/2010/10/google-app-engine-gae-vs-amazon-elastic-computing-ec2-vs-microsoft-azure

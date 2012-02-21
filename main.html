@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tranfusion Mapping</title>
+
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script> 
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+<style>
+html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input,textarea,select{font-size:100%}legend{color:#000}
+window{
+	height:100%;
+}
+body,html,#content{
+	font-family:Arial;
+	height:100%;
+	width:100%;
+}
+#content{
+	position:absolute;
+	z-index:1;
+	overflow:hidden;
+}
+#navigation{
+	position:absolute;
+	top:0px;
+	z-index:10;
+	width:100%;
+	background-color:#AAA;
+	border-bottom:solid #EEA41F 4px;
+}
+#navigation ul, .sub-nav ul{border:none;padding:0px;margin:0px;}
+#navigation li{
+	padding:8px 15px;
+	margin:0px;
+	list-style:none;
+	
+	font-size:14px;
+	font-weight:bold;
+	color:#FFF;
+	
+	display:inline-block;
+	cursor:pointer;
+}
+#navigation li.active{
+	background-color:#EEA41F;
+}
+#navigation li:hover{
+	background-color:#333;
+}
+#map-container,#data-container,#login-container,#pending-container{
+	width:100%;
+	height:100%;
+	margin-top:35px
+}
+
+/*sub navigations*/
+.sub-nav ul{
+	background-color:#EEA41F;
+}
+.sub-nav li{
+	padding:3px 8px;
+	margin:2px 0px 4px 4px;
+	list-style:none;
+	
+	font-size:12px;
+	font-weight:bold;
+	color:#FFF;
+	
+	display:inline-block;
+	cursor:pointer;
+}
+.sub-nav li.active{
+	background-color:#333;
+}
+
+/*form stuff*/
+.inner{
+	padding:10px;
+}
+form .title{
+	font-weight:bold;
+	font-size:12px;
+	color:#EEA41F;
+	padding:0px;
+	margin:0px;
+	line-height:16px;
+	width:125px;
+}
+input, select{
+	font-size:14px;
+	color:#FFF;
+	background-color:#AAA;
+	border:none;
+	font-weight:bold;
+	width:125px;
+	height:30px;
+}
+.round{
+	border-radius:3px;
+	-moz-border-radius:3px;
+}
+input.btn{
+	padding:4px;
+	font-size:16px;
+	font-weight:bold;
+	color:#FFF;
+	background-color:#333;
+	border:solid #333 2px;
+	cursor:pointer;
+}
+input.btn:hover{
+	border-top:solid #555 2px;
+	border-left:solid #555 2px;
+	border-bottom:solid #000 2px;
+	border-right:solid #000 2px;
+}
+#data-data-form li{
+	padding:0px 0px 8px 0px;
+}
+#data-data-form input, select{
+	width:75px;
+	margin-right:8px;
+}
+#data-data-form select{
+	width:150px;
+}
+.grad-grey{
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(#222));
+	background-image: -webkit-linear-gradient(top, #CCC, #222); 
+	background-image: -moz-linear-gradient(top, #CCC, #222);
+	background-image: -ms-linear-gradient(top, #CCC, #222);
+	background-image: -o-linear-gradient(top, #CCC, #222);
+}
+
+.infoWindow input{
+	margin-top:10px;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	cursor:pointer;
+	
+	border-right:solid transparent 2px;
+	border-bottom:solid transparent 2px;
+}
+.infoWindow input:hover{
+	border-right:solid black 2px;
+	border-bottom:solid black 2px;
+}
+</style>
+
+</head>
+<body>
+<div id="navigation" class="">
+	<ul>
+		<li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="login">Login/Logout</li>
+	</ul>	
+</div>
+<div id="content">
+	<div id="map-container"></div>
+	<div id="data-container" style="display:none;">
+		<div class="sub-nav" id="data-nav">
+			<ul>
+				<li id="data-header" class="active">Information</li>
+				<li id="data-data">Data</li>
+			</ul>
+		</div>
+		<div class="inner" id="data-header-container" style="margin:0px auto;max-width:400px;">
+			<form id="data-form">
+				<div style="float:left;width:50%">
+					<div class="title">SURVEY</div>
+					<input class="round" type="text" name="SURVEY" id="SURVEY" />
+					
+					<div class="title">FROM</div>
+					<input class="round" type="text" name="FROM" id="FROM" />
+					
+					<div class="title">TO</div>
+					<input class="round" type="text" name="TO" id="TO" />
+				</div>
+				
+				<div style="float:right;width:50%">
+					<input type="hidden" name="inspector" id="inspector" />
+					
+					<div class="title">SECTION WIDTH</div>
+					<input class="round" type="text" name="sectionwidth" id="WIDTH" />
+					
+					<div class="title">SECTION HEIGHT</div>
+					<input class="round" type="text" name="sectionheight" id="LENGTH" />
+					
+					<div class="title">DATE INSPECTED</div>
+					<input class="round" type="text" name="dateinspected" id="UPDATED_DATE" />
+				</div>
+				<div style="clear:both"></div>
+			</form>
+		</div>
+		<div class="inner" id="data-data-container" style="display:none">
+			<form id="data-data-form">
+			<ul id="data-data-elements"></ul>
+			<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
+			</form>
+		</div>
+	</div>
+	<div class="inner" id="login-container" style="display:none;">
+		<div style="margin:0px auto;max-width:400px;">
+			<form>
+				<div class="title">EMAIL</div>
+				<input class="round" type="text" name="email" />
+				
+				<div class="title">PASSWORD</div>
+				<input class="round" type="password" name="password" />
+				
+				<div style="margin-top:8px;">
+					<input type="button" value="Login" class="round btn" />
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="inner" id="pending-container" style="display:none">
+		<h2>Pending Changes...</h2>
+	</div>
+</div>
+
+<div id="current_point" style="width:50px;height:50px;background-color:red;display:none;position:absolute;"></div>
+
+<script>
+$(document).ready(function(){
+var dataMap = {
+		header : {
+		'FROM':'',
+		'TO':'',
+		'WIDTH':'',
+		'LENGTH':'',
+		'SURVEY':'',
+		'UPDATED_BY':'',
+		'UPDATED_DATE':'',
+		'geometry':'',
+		'COMMENT':'',
+		},
+		images : {
+		'SITE_IMAGE_1':'',
+		'SITE_IMAGE_2':'',
+		'SITE_IMAGE_3':'',
+		},
+		data : {
+			'ALLIG' : {
+				code : 1,
+				name : 'Alligator Cracking'
+			},
+			'BLEED' : {
+				code : 2,
+				name : 'Bleeding'
+			},
+			'BLOCK' : {
+				code : 3,
+				name : 'Block Cracking'
+			},
+			'BUMP' : {
+				code : 4,
+				name : 'Bumps and Sags'
+			},
+			'CORRU' : {
+				code : 5,
+				name : 'Corrugation',
+			},
+			'DEPRE' : {
+				code : 6,
+				name : 'Depression',
+			},
+			'EDGE' : {
+				code : 7,
+				name : 'Edge Cracking',
+			},
+			'REFLE' : {
+				code : 8,
+				name : 'Jt. Reflection Cracking'
+			},
+			'LANE' : {
+				code : 9,
+				name : 'Lane/Shoulder Drop Off'
+			},
+			'LONG' : {
+				code : 10,
+				name : 'Long &amp; Trans Cracking'
+			},
+			'PATCH' : {
+				code : 11,
+				name : 'Patch &amp; Util Cut Patching'
+			},
+			'POLIS' : {
+				code : 12,
+				name : 'Polished Aggregate'
+			},
+			'POTHO' : {
+				code : 13,
+				name : 'Potholes Count',
+			},
+			'BRCRO' : {
+				code : 14,
+				name : 'Railroad Crossing'
+			},
+			'RUTT' : {
+				code : 15,
+				name : 'Rutting'
+			},
+			'SHOV' : {
+				code : 16,
+				name : 'Shoving'
+			},
+			'SLIP' : {
+				code : 17,
+				name : 'Slippage Cracking'
+			},
+			'SWELL' : {
+				code : 18,
+				name : 'Swell'
+			},
+			'WEATH' : {
+				code : 19,
+				name : 'Weathering/Ravelling'
+			},
+		},
+	};
+	
+	/**
+	 * A wrapper for all functions
+	 */
+	var main = {
+		//reference to the navigation
+		$navs: null,
+		
+		//reference to the most recently clicked
+		//navigation tab
+		$current: null,
+		
+		//called on document load
+		init:function(){
+			var obj = this;
+			obj.$navs = $('#navigation li');
+			
+			//main navigation
+			obj.$navs.click(function(){
+				var $local = $(this);
+				obj.$current = $(this);
+				$('#'+obj.$navs.filter('.active').attr('id')+'-container').fadeOut(function(){
+					$('#'+$local.attr('id')+"-container").fadeIn();
+				});
+				
+				obj.$navs.removeClass('active');
+				$local.addClass('active');
+				
+				obj.saveState.call(obj);
+			});
+			
+			//subnavigations
+			$("#data-nav li").click(function(){
+				$(this).parent().find('li').removeClass('active');
+				$(this).addClass('active');
+				
+				var id = $(this).attr('id')+'-container';
+				
+				$(this).parent().parent().parent().find('.inner').each(function(){
+					if($(this).attr('id') == id){
+						$(this).show();
+					}else{
+						$(this).hide();
+					}
+				});
+			});
+			
+			//specific click event for #data
+			$('#data').click(function(){
+				$('#data-header').click();
+			});
+			
+			//specific click event for #map
+			//to fix some loading issues
+			$('#map-container').css('width','99%').css('width','100%');
+			
+			//add new data entries
+			$('#data-data-add').click(obj.htmlAddRecord);
+			
+			//build HTML list
+			this.$htmlDD = $(document.createElement('select')).addClass('round');
+			for(var x in dataMap.data){
+				var $temp = $(document.createElement('option'));
+				$temp.val(dataMap.data[x].code).html(dataMap.data[x].name);
+				this.$htmlDD.append($temp);
+			}
+			
+			//build the Delete button
+			this.$htmlDelete = $(document.createElement('input'))
+				.attr('class','round btn')
+				.val('Delete').attr('type','button');
+			
+			obj.restoreState();
+		},
+		//HTML drop down list for data
+		$htmlDD : null,
+		$htmlDelete : null,
+		
+		//add a record for input to the data
+		htmlAddRecord : function(){
+			var $ul = $('#data-data-elements');
+			var id = $ul.children().length;
+
+			var newElsNames = ['distcode','L','M','H'];
+			
+			var $li = $(document.createElement('li'));
+			$li.attr('id','data-entry-'+id);
+			
+			//create the DL
+			main.$htmlDD.clone().attr('id','distcode-'+id).appendTo($li);
+			
+			for(x=1; x<newElsNames.length; x++){
+				var $temp = $(document.createElement('input'));
+				$temp.attr('id',newElsNames[x] + '-' + id).attr('class','round');
+				$li.append($temp);
+			}
+			
+			//add the delete
+			$li.append(main.$htmlDelete.clone().click(function(){$(this).parent().remove();}));
+			
+			$ul.append($li);
+			return $li;
+		},
+		
+		/**
+		 * Add a record for data, and set record values
+		 * @param code int The corresponding code from dataMap.code
+		 * @param l The low value
+		 * @param m The medium value
+		 * @param h The high value
+		 */
+		htmlAddRecordData : function(code,l,m,h){
+			var $li = this.htmlAddRecord();
+			$li.children().first().val(code).next().val(l).next().val(m).next().val(h);
+		},
+		
+		//removes the record from local data store also
+		htmlRemoveRecord : function(id){
+			var wrapper = '#data-entry-'+id;
+			var $ul = $('#data-data-elements').find(wrapper).detach();
+		},
+		
+		//does not touch local data store
+		htmlRemoveAllRecords : function(){
+			$('#data-data-elements').empty();
+		},
+		
+		saveCurrentRecords : function(){
+		
+		},
+		
+		restoreState:function(){
+			//get the data
+			if(typeof sessionStorage.sessionData == 'string'){
+				this.sessionData = JSON.parse(sessionStorage.sessionData);
+			}
+			if(typeof localStorage.localData == 'string'){
+				this.localData = JSON.parse(localStorage.localData);
+			}
+			
+			$('#'+this.sessionData.navActive).trigger('click');
+		},
+		saveState:function(){
+			//store the data in local object
+			this.sessionData.navActive = this.$current.attr('id');
+			
+			//write to the session Data
+			sessionStorage.sessionData = JSON.stringify(this.sessionData);
+		},
+		sessionData : {
+			navActive : null,
+		},
+		localData : {
+			records : {}
+		},
+		dataMap : {
+			//a map from data map data to 
+		}
+	}
+	main.init();
+	
+	
+	
+	var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
+	//var city = new google.maps.LatLng(-25, 133);
+	
+	map = new google.maps.Map(document.getElementById('map-container'), {
+	  center: city,
+	  zoom: 17,
+	  mapTypeId: google.maps.MapTypeId.ROADMAP,
+	  zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
+	  streetViewControl: false,
+	  
+	});
+	
+	layer = new google.maps.FusionTablesLayer({
+	  query: {
+	    select: 'geometry',
+	    from: '2088364',
+		//where: "LineID = '102'",
+	  },
+	  suppressInfoWindows: true,
+	  
+	  styles: [{
+	    polygonOptions: {
+	      fillColor: "#00FF00",
+	      fillOpacity: 0.3
+	    }
+	  }]
+	});
+	layer.setMap(map);
+	layer.
+	infowindow = new google.maps.InfoWindow({
+		content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
+	});
+	
+	var setInfoWindowClass = function(){
+			$infowindow = $(infowindow.b.f);
+			$infowindow.parent().parent().addClass('infoWindow');
+	}
+	
+	google.maps.event.addListener(layer, 'click', function(e) {
+		
+		infowindow.setPosition(e.latLng);
+		infowindow.open(map);
+		$(infowindow.b.f).addClass('infoWindow')
+			.find('#EditPoint').click(function(){
+			for(var key in dataMap.header){
+				try{
+					var entry = e.row[key].value;
+					var field = key;
+					$('#'+field).val(entry);
+				} catch(err){
+					//do nothing
+				}
+			}
+			
+			main.htmlRemoveAllRecords();
+			
+			for(var key in dataMap.data){
+				try{
+					var l = e.row[key + '_L'].value;
+					var m = e.row[key + '_M'].value;
+					var h = e.row[key + '_H'].value;
+					var code = dataMap.data[key].code;
+					
+					if(l > 0 || m > 0 || h > 0){
+						main.htmlAddRecordData(code,l,m,h);
+					}
+				} catch(err){/*do nothing*/}
+			}
+			$('#data').click();
+		});
+		
+	});
+});
+</script>
+
+</body>
+</html>

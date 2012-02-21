@@ -1,0 +1,31 @@
+Research Paper
+
+Outline
+   - This is about various data storage engines
+   - Specifically MySQL, SQL, Amazon, Fusion Tables, App Engine
+   - How the research was performed
+   - Intended outcomes from research
+   
+Background
+   - SQL / MySQL
+   - App Engine
+   - Amazon S3
+   - Fusion Tables
+   
+Features / Benifits
+   - Outline
+   - Table Outlining Comparison
+   - Positive / Negatives
+   - Cost Benefit
+   
+How to Choose Correct Tech
+   - Cost
+   - Performance
+   - Reliability
+Future
+   - What is on the horizon
+   - What technology is best, new or time tested
+   
+Conclusion
+   - Summarize the pros
+   - What technol

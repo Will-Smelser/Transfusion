@@ -1,0 +1,54 @@
+
+=========
+App Engine Datastore
+=========
+
+About
+http://code.google.com/appengine/docs/whatisgoogleappengine.html
+
+no setup costs
+billed per GB of usage
+1 GB free
+can suppory up to 5 million page views a month for free
+
+Sandbox
+
+Python 2.5 and 2.7, and Java
+go Programming Enviroment
+
+ - App Engine Datastore provides a NoSQL schemaless object datastore, with a query engine and atomic transactions.
+ - Google Cloud SQL provides a relational SQL database service for your App Engine application, based on the familiar MySQL RDBMS.
+ - Google Cloud Storage provides a storage service for objects and files up to terabytes in size, accessible from Python and Java applications.
+ 
+== 2 Data Store Options ==
+1) HRD - High Replication Datastore
+	- based on paxos algorithm
+2) Master/Slave Data Store
+	- One master data center, and several slaves
+	- Provides high consistancy
+	
+== Accessing Data ==
+URL Fetch
+	- Use google App Engine's URL fetch service
+
+Memcache
+	- Provides quick access for data that does not require transactional features or persistance
+	- Max size of 250 bytes for keys and 1MB for data
+	- Multiple cache entries for data stored across several "buckets" can be up to 32 MB
+	
+Image Manipulation
+	- Provides and API for resize, crop, and flip images in PNG and JPEG format
+	
+Schedule Tasks
+	- Cron Jobs - Can schedule the same as crons.  Crons execute by triggering a GET request to
+		to a specified URI.
+	- Same limits as HTTP GET
+
+
+== JDO API ==
+Uses DataNucleus Access Platform
+http://www.datanucleus.org/products/accessplatform/
+	Supports JDO, JPA, and REST
+	REST is not fully implamented - http://www.datanucleus.org/products/accessplatform/rest/api.html
+	
+ 
