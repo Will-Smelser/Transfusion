@@ -4,6 +4,7 @@
 <title>Tranfusion Mapping</title>
 
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script> 
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
@@ -49,7 +50,7 @@ body,html,#content{
 #navigation li:hover{
 	background-color:#333;
 }
-#map-container,#data-container,#login-container,#pending-container{
+#map-container,#data-container,#login-container,#pending-container, #mselect-container{
 	width:100%;
 	height:100%;
 	margin-top:35px
@@ -83,6 +84,15 @@ form .title{
 	font-weight:bold;
 	font-size:12px;
 	color:#EEA41F;
+	padding:0px;
+	margin:0px;
+	line-height:16px;
+	width:125px;
+}
+form .dropdown{
+	font-weight:bold;
+	font-size:12px;
+	color:#000000;
 	padding:0px;
 	margin:0px;
 	line-height:16px;
@@ -153,11 +163,25 @@ input.btn:hover{
 <body>
 <div id="navigation" class="">
 	<ul>
-		<li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="login">Login/Logout</li>
+		<li id="mselect">Map Select</li><li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="login">Login/Logout</li>
 	</ul>	
 </div>
 <div id="content">
-	<div id="map-container"></div>
+	<div id="map-container">
+	</div>
+	<div class="inner" id="mselect-container" style="display:none;">
+		<div style="margin:0px auto;max-width:400px;">
+			<form name="drop_list">
+				<div class="title">Select A Map
+				
+					<select name ="mapselect" id="mapselect" class="dropdown">
+					</select>
+				
+				</div> 
+			</form>
+		</div>
+	</div> 
+	
 	<div id="data-container" style="display:none;">
 		<div class="sub-nav" id="data-nav">
 			<ul>
@@ -481,10 +505,8 @@ var dataMap = {
 	}
 	main.init();
 	
-	
-	
+	// use geo-location to get latlng, can pass in a latlng object or like below
 	var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
-	//var city = new google.maps.LatLng(-25, 133);
 	
 	map = new google.maps.Map(document.getElementById('map-container'), {
 	  center: city,
@@ -498,8 +520,7 @@ var dataMap = {
 	layer = new google.maps.FusionTablesLayer({
 	  query: {
 	    select: 'geometry',
-	    from: '2088364',
-		//where: "LineID = '102'",
+	    from: '2088364', // again, geolocation to replace this with closest one
 	  },
 	  suppressInfoWindows: true,
 	  
@@ -555,6 +576,103 @@ var dataMap = {
 		});
 		
 	});
+	
+	///////////////////////////////////////////////////////
+	//Pulling data from the fusion table
+	
+	// array that will hold the centerpoint of the fusion table location
+	arrcenterpoint = new Array();
+	
+	// build the query, then encodes it
+	var query = "SELECT FusionID, CenterPoint, LocationName FROM 3004080"; // order by closest here?
+	var queryUrlHead = "https://www.google.com/fusiontables/api/query?sql=";
+	var queryUrlTail = '&jsonCallback=?';
+	var queryurl = encodeURI(queryUrlHead + query + queryUrlTail);
+	
+	// makes the actual query
+	var jqxhr = $.get(queryurl, dataHandler, "jsonp");
+	
+	// pulls the info out of the jsonp, puts it in the select box and the centerpoint array
+	function dataHandler(d) 
+	{
+		var data = d.table.rows; // data[x][0] is the fusionID, data[x][1] is the centerpoint, data[x][2] is the text name of each entry
+		 
+		for (var i = 0; i < data.length; i++) 
+		{
+			addOption(document.drop_list.mapselect, data[i][2], data[i][0]);
+			arrcenterpoint[i] = data[i][1]; // place each centerpoint in an array using the same index as the fusion table uses
+		}
+
+	}
+
+	// function for dynamically creating the map select dropdown
+	function addOption(selectbox,text,value )
+	{
+		var optn = document.createElement("OPTION");
+		optn.text = text;
+		optn.value = value;
+		selectbox.options.add(optn);
+	}	
+	
+	//////////////////////////////////////////////////////
+	//creating new maps to be displayed
+	
+	$('#mapselect').change(function () {
+		selectedfusion = $('#mapselect option:selected').val();
+		// get the correct set of coords from the coord array
+		stringCoordinates = arrcenterpoint[document.getElementById('mapselect').selectedIndex];
+		splitcoords = stringCoordinates.split(',');
+		var lat = splitcoords[0];
+		var lng = splitcoords[1];
+		$("li#map").trigger('click'); // make this happen from new page
+		makeMap(lat,lng);
+		makeFusion($('#mapselect option:selected').val());
+		
+		// do something like remake the map, when a text box is selected.
+		// right now it's just returning the fusionID of the one selected and triggering a map click
+	});
+	
+	// function to make a new map
+	function makeMap(lat,lng)
+	{
+		
+		var city = new google.maps.LatLng(lat,lng);
+		map.panTo(city);
+	
+		//map = new google.maps.Map(document.getElementById('map-container'), {
+		//center: city,
+		//zoom: 17,
+		//mapTypeId: google.maps.MapTypeId.ROADMAP,
+		//zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
+		//streetViewControl: false,
+		//});
+	}
+	
+	// function to link a fusion table with the new map
+	function makeFusion(fid)
+	{
+		layer.setMap(null);
+		layer = new google.maps.FusionTablesLayer({
+			query: {
+				select: 'geometry',
+				from: fid,
+			},
+			suppressInfoWindows: true,
+	  
+			styles: [{
+				polygonOptions: {
+				fillColor: "#00FF00",
+				fillOpacity: 0.3
+				}
+			}]
+		});
+		layer.setMap(map);
+		layer.
+		infowindow = new google.maps.InfoWindow({
+			content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
+		});
+	}
+	
 });
 </script>
 
