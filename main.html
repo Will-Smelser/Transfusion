@@ -556,8 +556,9 @@ var dataMap = {
 				if(selectedfusion == 0) return;
 				
 				// get the correct set of coords from the coord array
-				stringCoordinates = selectedfusion.split('*')[1];
-				splitcoords = stringCoordinates.split(',');
+				var info = selectedfusion.split('*');
+				var fusionId = info[0];
+				var splitcoords = info[1].split(',');
 				var lat = splitcoords[0];
 				var lng = splitcoords[1];
 				
@@ -566,7 +567,7 @@ var dataMap = {
 				var city = new google.maps.LatLng(lat,lng);
 				main.map.panTo(city);
 				
-				main.initFusionLayer(selectedfusion);
+				main.initFusionLayer(fusionId);
 			});
 		},
 		
