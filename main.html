@@ -621,6 +621,12 @@ var dataMap = {
 		marker : null,
 		
 		/**
+		 * The max distance marker should be from closest position
+		 * and still center map to the user
+		 */
+		maxMarkerDist : 10, //miles
+		
+		/**
 		 * This is the callback function for setting location for
 		 * user on the map.
 		 * @param position The system position returned
@@ -638,6 +644,14 @@ var dataMap = {
 					var fusionId = main.$htmlDDmap.children().first().next().val().split('*')[0];
 					main.initFusionLayer(fusionId);
 					
+					//check the distance and determine if there is a reason to locate map
+					//to current user position
+					var mapPos = main.map.getCenter();
+					var dist = main.distanceBetweenPoints(lat,lgt,mapPos.lat(),mapPos.lng());
+					
+					//bail if the user is nowhere near anything
+					if(dist > main.maxMarkerDist) return;
+					
 					var loc = new google.maps.LatLng(lat,lgt);
 					main.map.panTo(loc);
 					
@@ -650,6 +664,18 @@ var dataMap = {
 					main.watchLocation();
 				}
 			);
+		},
+		distanceBetweenPoints : function(lat1,lon1,lat2,lon2){
+			var R = 3963; // miles
+			var dLat = (lat2-lat1) * 3.14/180;
+			var dLon = (lon2-lon1) * 3.14/180;
+			var lat1 = lat1 * 3.14/180;
+			var lat2 = lat2 * 3.14/180;
+
+			var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+					Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+			return R * c;
 		},
 		/**
 		 * If a position for user is found, then this is called.
