@@ -125,6 +125,7 @@ input.btn:hover{
 	border-left:solid #555 2px;
 	border-bottom:solid #000 2px;
 	border-right:solid #000 2px;
+	background-color:#555;
 }
 #data-data-form li{
 	padding:0px 0px 8px 0px;
@@ -172,8 +173,7 @@ input.btn:hover{
 	<div class="inner" id="mselect-container" style="display:none;">
 		<div style="margin:0px auto;max-width:400px;">
 			<form name="drop_list">
-				<div class="title">Select A Map
-				
+				<div class="title">LOCATIONS
 					<select name ="mapselect" id="mapselect" class="dropdown">
 					</select>
 				
@@ -218,10 +218,12 @@ input.btn:hover{
 			</form>
 		</div>
 		<div class="inner" id="data-data-container" style="display:none">
+			<div style="margin-left:auto;margin-right:auto;width:500px">
 			<form id="data-data-form">
-			<ul id="data-data-elements"></ul>
-			<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
+				<ul id="data-data-elements"></ul>
+				<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
 			</form>
+			</div>
 		</div>
 	</div>
 	<div class="inner" id="login-container" style="display:none;">
@@ -366,7 +368,14 @@ var dataMap = {
 				var $local = $(this);
 				obj.$current = $(this);
 				$('#'+obj.$navs.filter('.active').attr('id')+'-container').fadeOut(function(){
-					$('#'+$local.attr('id')+"-container").fadeIn();
+					if($local.attr('id') == "map"){
+						//add a callback for fixing map
+						$('#'+$local.attr('id')+"-container").fadeIn(function(){
+							$(this).css('width','99%').css('width','100%');
+						});
+					}else{
+						$('#'+$local.attr('id')+"-container").fadeIn();
+					}
 				});
 				
 				obj.$navs.removeClass('active');
@@ -395,11 +404,7 @@ var dataMap = {
 			$('#data').click(function(){
 				$('#data-header').click();
 			});
-			
-			//specific click event for #map
-			//to fix some loading issues
-			$('#map-container').css('width','99%').css('width','100%');
-			
+				
 			//add new data entries
 			$('#data-data-add').click(obj.htmlAddRecord);
 			
@@ -421,6 +426,9 @@ var dataMap = {
 		//HTML drop down list for data
 		$htmlDD : null,
 		$htmlDelete : null,
+		
+		//HTML drop down list for maps choices
+		$htmlDDmap : $(document.drop_list.mapselect),
 		
 		//add a record for input to the data
 		htmlAddRecord : function(){
@@ -475,6 +483,70 @@ var dataMap = {
 		
 		},
 		
+		initHtmlMapOptions : function(lat,lgt,callback){
+			
+			
+		
+			if(typeof lat == "undefined" || typeof lgt == "undefined"){
+				var query = "SELECT FusionID, CenterPoint, LocationName FROM 3004080";
+			} else {
+				var query = "SELECT FusionID, CenterPoint, LocationName FROM 3004080 ORDER BY ST_DISTANCE(CenterPoint, LATLNG("+lat+","+lgt+")) ASC"
+			}
+			var query = "SELECT FusionID, CenterPoint, LocationName FROM 3004080";
+			var queryUrlHead = "https://www.google.com/fusiontables/api/query?sql=";
+			var queryUrlTail = '&jsonCallback=?';
+			var queryurl = encodeURI(queryUrlHead + query + queryUrlTail);
+			
+			var dataHandler = function(d) 
+			{
+				// data[x][0] is the fusionID, data[x][1] is the centerpoint, data[x][2] is the text name of each entry
+				var data = d.table.rows; 
+				
+				main.$htmlDDmap.empty();
+				
+				var optn = document.createElement("OPTION");
+				optn.text = "Choose Location";
+				optn.value = 0;
+				main.$htmlDDmap.append(optn);
+				
+				for (var x in data) 
+				{
+					var optn = document.createElement("OPTION");
+					optn.text = data[x][2];
+					optn.value = data[x][0]+'*'+data[x][1];
+					main.$htmlDDmap.append(optn);
+				}
+				if(typeof callback != "undefined"){
+					callback();
+				}
+			};
+			// makes the actual query
+			var jqxhr = $.get(queryurl, dataHandler, "jsonp");
+		},
+		
+		bindHtmlMapChange : function(){
+			//bind the click options
+			this.$htmlDDmap.change(function (e) {
+				selectedfusion = $(this).find('option:selected').val();
+				
+				//this is the "Select Location" option
+				if(selectedfusion == 0) return;
+				
+				// get the correct set of coords from the coord array
+				stringCoordinates = selectedfusion.split('*')[1];
+				splitcoords = stringCoordinates.split(',');
+				var lat = splitcoords[0];
+				var lng = splitcoords[1];
+				
+				main.$navs.filter("#map").trigger('click'); // make this happen from new page
+								
+				var city = new google.maps.LatLng(lat,lng);
+				main.map.panTo(city);
+				
+				main.initFusionLayer(selectedfusion);
+			});
+		},
+		
 		restoreState:function(){
 			//get the data
 			if(typeof sessionStorage.sessionData == 'string'){
@@ -499,181 +571,153 @@ var dataMap = {
 		localData : {
 			records : {}
 		},
-		dataMap : {
-			//a map from data map data to 
-		}
-	}
-	main.init();
-	
-	// use geo-location to get latlng, can pass in a latlng object or like below
-	var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
-	
-	map = new google.maps.Map(document.getElementById('map-container'), {
-	  center: city,
-	  zoom: 17,
-	  mapTypeId: google.maps.MapTypeId.ROADMAP,
-	  zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
-	  streetViewControl: false,
-	  
-	});
-	
-	layer = new google.maps.FusionTablesLayer({
-	  query: {
-	    select: 'geometry',
-	    from: '2088364', // again, geolocation to replace this with closest one
-	  },
-	  suppressInfoWindows: true,
-	  
-	  styles: [{
-	    polygonOptions: {
-	      fillColor: "#00FF00",
-	      fillOpacity: 0.3
-	    }
-	  }]
-	});
-	layer.setMap(map);
-	
-	infowindow = new google.maps.InfoWindow({
-		content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
-	});
-	
-	var setInfoWindowClass = function(){
-			$infowindow = $(infowindow.b.f);
-			$infowindow.parent().parent().addClass('infoWindow');
-	}
-	
-	google.maps.event.addListener(layer, 'click', function(e) {
+		initLocation : function(){
+			navigator.geolocation.
+				getCurrentPosition(main.setLocationCallback,main.getLocationFailed);
+		},
 		
-		infowindow.setPosition(e.latLng);
-		infowindow.open(map);
-		$(infowindow.b.f).addClass('infoWindow')
-			.find('#EditPoint').click(function(){
-			for(var key in dataMap.header){
-				try{
-					var entry = e.row[key].value;
-					var field = key;
-					$('#'+field).val(entry);
-				} catch(err){
-					//do nothing
-				}
-			}
+		marker : null,
+		setLocationCallback : function(position){
 			
-			main.htmlRemoveAllRecords();
-			
-			for(var key in dataMap.data){
-				try{
-					var l = e.row[key + '_L'].value;
-					var m = e.row[key + '_M'].value;
-					var h = e.row[key + '_H'].value;
-					var code = dataMap.data[key].code;
+			//reset the menu to be ordered
+			var lat = position.coords.latitude;
+			var lgt = position.coords.longitude;
+			main.initHtmlMapOptions(lat,lgt,
+				function(){
+					var fusionId = main.$htmlDDmap.children().first().next().val().split('*')[0];
+					main.initFusionLayer(fusionId);
 					
-					if(l > 0 || m > 0 || h > 0){
-						main.htmlAddRecordData(code,l,m,h);
-					}
-				} catch(err){/*do nothing*/}
-			}
-			$('#data').click();
-		});
+					var loc = new google.maps.LatLng(lat,lgt);
+					main.map.panTo(loc);
+					
+					main.marker = new google.maps.Marker({
+						draggable:false,clickable:false,position:loc
+					});
+					
+					main.marker.setMap(main.map);
+					
+					main.watchLocation();
+				}
+			);
+		},
+		watchLocation : function(){
+			navigator.geolocation.watchPosition(function(position){
+				var lat = position.coords.latitude;
+				var lgt = position.coords.longitude;
+				var loc = new google.maps.LatLng(lat,lgt);
+				main.marker.setPosition(loc);
+			}, main.getLocationFailed);
+		},
+		getLocationFailed : function(error){
+			switch(error.code)  
+            {  
+                case error.PERMISSION_DENIED: 
+				//user did not share location, do nothing
+                break;  
+  
+                case error.POSITION_UNAVAILABLE: 
+                //could not locate current position
+                break;  
+  
+                case error.TIMEOUT: 
+				//timeout error
+                break;  
+  
+                default: 
+                //unknown error
+                break;  
+            }
+		},
+		map:null,        //the google map
+		fusion:null,     //the fusion layer
+		mapWindow:null, //the popup window in map
 		
-	});
-	
-	///////////////////////////////////////////////////////
-	//Pulling data from the fusion table
-	
-	// array that will hold the centerpoint of the fusion table location
-	arrcenterpoint = new Array();
-	
-	// build the query, then encodes it
-	var query = "SELECT FusionID, CenterPoint, LocationName FROM 3004080"; // order by closest here?
-	var queryUrlHead = "https://www.google.com/fusiontables/api/query?sql=";
-	var queryUrlTail = '&jsonCallback=?';
-	var queryurl = encodeURI(queryUrlHead + query + queryUrlTail);
-	
-	// makes the actual query
-	var jqxhr = $.get(queryurl, dataHandler, "jsonp");
-	
-	// pulls the info out of the jsonp, puts it in the select box and the centerpoint array
-	function dataHandler(d) 
-	{
-		var data = d.table.rows; // data[x][0] is the fusionID, data[x][1] is the centerpoint, data[x][2] is the text name of each entry
-		 
-		for (var i = 0; i < data.length; i++) 
-		{
-			addOption(document.drop_list.mapselect, data[i][2], data[i][0]);
-			arrcenterpoint[i] = data[i][1]; // place each centerpoint in an array using the same index as the fusion table uses
-		}
-
-	}
-
-	// function for dynamically creating the map select dropdown
-	function addOption(selectbox,text,value )
-	{
-		var optn = document.createElement("OPTION");
-		optn.text = text;
-		optn.value = value;
-		selectbox.options.add(optn);
-	}	
-	
-	//////////////////////////////////////////////////////
-	//creating new maps to be displayed
-	
-	$('#mapselect').change(function () {
-		selectedfusion = $('#mapselect option:selected').val();
-		// get the correct set of coords from the coord array
-		stringCoordinates = arrcenterpoint[document.getElementById('mapselect').selectedIndex];
-		splitcoords = stringCoordinates.split(',');
-		var lat = splitcoords[0];
-		var lng = splitcoords[1];
-		$("li#map").trigger('click'); // make this happen from new page
-		makeMap(lat,lng);
-		makeFusion($('#mapselect option:selected').val());
+		initMap : function(position){
+			var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
+			this.map = new google.maps.Map(document.getElementById('map-container'), {
+				center: city,
+				zoom: 17,
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
+				streetViewControl: false,			  
+			});
+		},
 		
-		// do something like remake the map, when a text box is selected.
-		// right now it's just returning the fusionID of the one selected and triggering a map click
-	});
-	
-	// function to make a new map
-	function makeMap(lat,lng)
-	{
-		
-		var city = new google.maps.LatLng(lat,lng);
-		map.panTo(city);
-	
-		//map = new google.maps.Map(document.getElementById('map-container'), {
-		//center: city,
-		//zoom: 17,
-		//mapTypeId: google.maps.MapTypeId.ROADMAP,
-		//zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
-		//streetViewControl: false,
-		//});
-	}
-	
-	// function to link a fusion table with the new map
-	function makeFusion(fid)
-	{
-		layer.setMap(null);
-		layer = new google.maps.FusionTablesLayer({
+		initFusionLayer : function(id){
+			var obj = this;
+			this.fusion = new google.maps.FusionTablesLayer({
 			query: {
 				select: 'geometry',
-				from: fid,
+				from: id, // again, geolocation to replace this with closest one
 			},
 			suppressInfoWindows: true,
-	  
 			styles: [{
 				polygonOptions: {
-				fillColor: "#00FF00",
-				fillOpacity: 0.3
-				}
-			}]
-		});
-		layer.setMap(map);
-		layer.
-		infowindow = new google.maps.InfoWindow({
-			content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
-		});
-	}
-	
+					fillColor: "#00FF00",
+					fillOpacity: 0.3
+					}
+				}]
+			});
+			
+			main.fusion.setMap(main.map);
+			main.initInfoWindow();
+			main.initFusionClickEvent();
+		},
+		
+		initInfoWindow : function(){
+			this.mapWindow = infowindow = new google.maps.InfoWindow({
+				content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
+			});
+		},
+		initFusionClickEvent : function(){
+			google.maps.event.addListener(main.fusion, 'click', function(e) {
+			
+				main.mapWindow.setPosition(e.latLng);
+				
+				main.mapWindow.open(main.map);
+				$(main.mapWindow.b.f).addClass('infoWindow')
+					.find('#EditPoint').click(function(){
+					for(var key in dataMap.header){
+						try{
+							var entry = e.row[key].value;
+							var field = key;
+							$('#'+field).val(entry);
+						} catch(err){
+							//do nothing
+						}
+					}
+					
+					main.htmlRemoveAllRecords();
+					
+					for(var key in dataMap.data){
+						try{
+							var l = e.row[key + '_L'].value;
+							var m = e.row[key + '_M'].value;
+							var h = e.row[key + '_H'].value;
+							var code = dataMap.data[key].code;
+							
+							if(l > 0 || m > 0 || h > 0){
+								main.htmlAddRecordData(code,l,m,h);
+							}
+						} catch(err){
+							//do nothing
+						}
+					}
+					//trigger the data tab and then show data-data sub nav
+					$('#data').click();
+					$('#data-data').click();
+				});
+				
+			});
+		}
+	};
+	main.init();
+	main.initMap();
+	main.initHtmlMapOptions();
+	main.bindHtmlMapChange();
+	main.initLocation();
 });
+	
 </script>
 
 </body>
