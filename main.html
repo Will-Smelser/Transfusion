@@ -250,6 +250,9 @@ input.btn:hover{
 
 <script>
 $(document).ready(function(){
+/**
+ * This is the datamap used when a user decides to edit data
+ */
 var dataMap = {
 		header : {
 		'FROM':'',
@@ -425,6 +428,8 @@ var dataMap = {
 		},
 		//HTML drop down list for data
 		$htmlDD : null,
+		
+		//delete button for data
 		$htmlDelete : null,
 		
 		//HTML drop down list for maps choices
@@ -468,13 +473,18 @@ var dataMap = {
 			$li.children().first().val(code).next().val(l).next().val(m).next().val(h);
 		},
 		
-		//removes the record from local data store also
+		/**
+		 * Remove an HTML entry from data list
+		 * @param id Int the unique id for the element
+		 */
 		htmlRemoveRecord : function(id){
 			var wrapper = '#data-entry-'+id;
 			var $ul = $('#data-data-elements').find(wrapper).detach();
 		},
 		
-		//does not touch local data store
+		/**
+		 * Removes all elements from the data list
+		 */
 		htmlRemoveAllRecords : function(){
 			$('#data-data-elements').empty();
 		},
@@ -483,9 +493,18 @@ var dataMap = {
 		
 		},
 		
-		initHtmlMapOptions : function(lat,lgt,callback){
-			
-			
+		/**
+		 * Initializes the map choices.  All parameters are optional
+		 * but if lat is set, it is expected that lgt and callback are 
+		 * also set.
+		 *
+		 * Performs 2 different operations
+		 * - If lat is set:
+		 *   + Order list based on closest to lat and lgt given
+		 * - If lat undefined
+		 *   + Order based on however fusion tables returns query
+		 */
+		initHtmlMapOptions : function(lat,lgt,callback){	
 		
 			if(typeof lat == "undefined" || typeof lgt == "undefined"){
 				var query = "SELECT FusionID, CenterPoint, LocationName FROM 3004080";
@@ -523,7 +542,11 @@ var dataMap = {
 			// makes the actual query
 			var jqxhr = $.get(queryurl, dataHandler, "jsonp");
 		},
-		
+		/**
+		 * Binds the map selection drop down list change event
+		 * Fusion table initialization happens on this change
+		 * @see initFusionLayer()
+		 */
 		bindHtmlMapChange : function(){
 			//bind the click options
 			this.$htmlDDmap.change(function (e) {
@@ -547,6 +570,12 @@ var dataMap = {
 			});
 		},
 		
+		/**
+		 * Designed to restore last state based on sessionData and
+		 * localStorage.  Not fully implamented.
+		 * @see saveState()
+		 * @TO-DO Add all the Map stuff
+		 */
 		restoreState:function(){
 			//get the data
 			if(typeof sessionStorage.sessionData == 'string'){
@@ -558,6 +587,10 @@ var dataMap = {
 			
 			$('#'+this.sessionData.navActive).trigger('click');
 		},
+		/**
+		 * Should take a snapshot and store this locally
+		 * @see restoreState()
+		 */
 		saveState:function(){
 			//store the data in local object
 			this.sessionData.navActive = this.$current.attr('id');
@@ -571,12 +604,29 @@ var dataMap = {
 		localData : {
 			records : {}
 		},
+		
+		/**
+		 * Looks for users position.  Has success or failure.
+		 * @see setLocationCallback() This is the on success
+		 * @see getLocationFailed() This is on error
+		 */
 		initLocation : function(){
 			navigator.geolocation.
 				getCurrentPosition(main.setLocationCallback,main.getLocationFailed);
 		},
-		
+		/**
+		 * Holds google marker object representing users position
+		 */
 		marker : null,
+		
+		/**
+		 * This is the callback function for setting location for
+		 * user on the map.
+		 * @param position The system position returned
+		 * @see initLocation() Scope of this function
+		 * @see watchLocation() Called at end.
+		 * @see http://www.w3.org/TR/geolocation-API/#geolocation_interface
+		 */
 		setLocationCallback : function(position){
 			
 			//reset the menu to be ordered
@@ -600,6 +650,12 @@ var dataMap = {
 				}
 			);
 		},
+		/**
+		 * If a position for user is found, then this is called.
+		 * Updates the marker.
+		 * @see marker
+		 * @see setLocationCallback() Scope of this funcitno
+		 */
 		watchLocation : function(){
 			navigator.geolocation.watchPosition(function(position){
 				var lat = position.coords.latitude;
@@ -608,6 +664,11 @@ var dataMap = {
 				main.marker.setPosition(loc);
 			}, main.getLocationFailed);
 		},
+		/**
+		 * Handles errors from attempting to find user location.
+		 * @see watchLocation()
+		 * @see initLocation()
+		 */
 		getLocationFailed : function(error){
 			switch(error.code)  
             {  
@@ -628,11 +689,26 @@ var dataMap = {
                 break;  
             }
 		},
+		/**
+		 * The google map
+		 */
 		map:null,        //the google map
+		
+		/**
+		 * Currently loaded fusion table
+		 */
 		fusion:null,     //the fusion layer
+		
+		/**
+		 * Customized popup window
+		 */
 		mapWindow:null, //the popup window in map
 		
-		initMap : function(position){
+		/**
+		 * Initializes the google map.
+		 * @TO-DO Set the initial locaiton to headquarters
+		 */
+		initMap : function(){
 			var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
 			this.map = new google.maps.Map(document.getElementById('map-container'), {
 				center: city,
@@ -643,6 +719,10 @@ var dataMap = {
 			});
 		},
 		
+		/**
+		 * Initialize a Fusion Table Layer
+		 * @param id Int The unique fusion table id to load
+		 */
 		initFusionLayer : function(id){
 			var obj = this;
 			this.fusion = new google.maps.FusionTablesLayer({
@@ -664,17 +744,31 @@ var dataMap = {
 			main.initFusionClickEvent();
 		},
 		
+		/**
+		 * Initializes the informaiton window.
+		 * @see mapWindow
+		 */
 		initInfoWindow : function(){
 			this.mapWindow = infowindow = new google.maps.InfoWindow({
 				content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
 			});
 		},
+		
+		/**
+		 * Binds the click event for the current fusion table layer
+		 */
 		initFusionClickEvent : function(){
+			//bind the click event to fusion layer
 			google.maps.event.addListener(main.fusion, 'click', function(e) {
 			
+				//set the position of the information window
+				//to the clicked on element
 				main.mapWindow.setPosition(e.latLng);
 				
+				//bind the map window to the map
 				main.mapWindow.open(main.map);
+				
+				//alter the class (for display purposes) and bind a click event
 				$(main.mapWindow.b.f).addClass('infoWindow')
 					.find('#EditPoint').click(function(){
 					for(var key in dataMap.header){
@@ -687,8 +781,11 @@ var dataMap = {
 						}
 					}
 					
+					//clean up the HTML data area
 					main.htmlRemoveAllRecords();
 					
+					//cycle through all fusion table data
+					//and add the records into the HTML
 					for(var key in dataMap.data){
 						try{
 							var l = e.row[key + '_L'].value;
@@ -711,10 +808,19 @@ var dataMap = {
 			});
 		}
 	};
+	//initialize the navigation and basic events
 	main.init();
+	
+	//initialize the map, no fusion stuff
 	main.initMap();
+	
+	//initialize the drop down menu
 	main.initHtmlMapOptions();
+	
+	//bind the map choice drop down list change event
 	main.bindHtmlMapChange();
+	
+	//attempt to position map based on user's location
 	main.initLocation();
 });
 	
