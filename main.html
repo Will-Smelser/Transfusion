@@ -191,6 +191,10 @@ input.btn:hover{
 		</div>
 		<div class="inner" id="data-header-container" style="margin:0px auto;max-width:400px;">
 			<form id="data-form">
+				<input type="hidden" name="LineID" id="LineID" value="" />
+				<input type="hidden" name="UPDATED_BY" id="UPDATED_BY" value="" />
+				<input type="hidden" name="UPDATED_DATE" id="UPDATED_DATE" value="" />
+				
 				<div style="float:left;width:50%">
 					<div class="title">SURVEY</div>
 					<input class="round" type="text" name="SURVEY" id="SURVEY" />
@@ -255,6 +259,7 @@ $(document).ready(function(){
  */
 var dataMap = {
 		header : {
+		'LineID':'',
 		'FROM':'',
 		'TO':'',
 		'WIDTH':'',
@@ -262,8 +267,8 @@ var dataMap = {
 		'SURVEY':'',
 		'UPDATED_BY':'',
 		'UPDATED_DATE':'',
-		'geometry':'',
-		'COMMENT':'',
+		//'geometry':'',
+		//'COMMENT':'',
 		},
 		images : {
 		'SITE_IMAGE_1':'',
@@ -492,6 +497,58 @@ var dataMap = {
 		saveCurrentRecords : function(){
 		
 		},
+		/**
+		 * Private object for holding id=>field_name of dataMap.data object.
+		 */
+		_cacheCrackById : {},
+		
+		/**
+		 * Get the crack type drop down list id value to fusion map field name
+		 * @param id Integer Id of the dataMap.data.<field name>.id
+		 */
+		_getCrackTypeById : function(id){
+			if(typeof this._cacheCrackById.length == 'undefined'){
+				for(var x in dataMap.data){
+					this._cacheCrackById[dataMap.data[x].code] = x;
+				}
+			} 
+			return this._cacheCrackById[id];
+		},
+		/**
+		 * Get the current information about data
+		 * @return JSON {<field name>:<value>...}
+		 * @see dataMap object
+		 */
+		 getCurrentData : function(){
+			var data = {};
+			
+			//get the header information
+			for(var x in dataMap.header){
+				data[x] = $('#'+x).val();
+			}
+			
+			//get the body elements
+			$('#data-data-elements li').each(function(){
+				//row from <ul> wrapper
+				var $el = $(this);
+				
+				//get the drop down list value
+				var typeId = $el.find('select').val();
+				var typeCrack = main._getCrackTypeById(typeId);
+				
+				//get the inputs values
+				var inputs = $el.find('input');
+				var low = $(inputs[0]).val();
+				var med = $(inputs[1]).val();
+				var high= $(inputs[2]).val();
+				
+				data[typeCrack+'_L'] = low;
+				data[typeCrack+'_M'] = med;
+				data[typeCrack+'_H'] = high;
+				
+			});
+			return data;
+		 },
 		
 		/**
 		 * Initializes the map choices.  All parameters are optional
@@ -665,6 +722,14 @@ var dataMap = {
 				}
 			);
 		},
+		/**
+		 * Calculate the length between 2 points given lat and long
+		 * @param lat1 float First points latitude
+		 * @param lon1 float First points longitude
+		 * @param lat1 float Second points latitude
+		 * @param lon1 flaot Second points longitude
+		 * @return float The arc distance between 2 given points
+		 */
 		distanceBetweenPoints : function(lat1,lon1,lat2,lon2){
 			var R = 3963; // miles
 			var dLat = (lat2-lat1) * 3.14/180;
@@ -849,6 +914,8 @@ var dataMap = {
 	
 	//attempt to position map based on user's location
 	main.initLocation();
+	
+	window.main = main;
 });
 	
 </script>
