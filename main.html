@@ -226,6 +226,7 @@ input.btn:hover{
 			<form id="data-data-form">
 				<ul id="data-data-elements"></ul>
 				<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
+				<input id="data-data-save" type="button" class="round btn save" style="width:auto;" value="Save" />
 			</form>
 			</div>
 		</div>
@@ -416,6 +417,9 @@ var dataMap = {
 			//add new data entries
 			$('#data-data-add').click(obj.htmlAddRecord);
 			
+			//save updated data entries
+			$('#data-data-save').click(obj.htmlSaveRecord);
+			
 			//build HTML list
 			this.$htmlDD = $(document.createElement('select')).addClass('round');
 			for(var x in dataMap.data){
@@ -467,6 +471,18 @@ var dataMap = {
 		},
 		
 		/**
+		 * Save the current record values to local data store.
+		 * Event is bound to the save button click
+		 */
+		htmlSaveRecord : function(){
+			var data = main.getCurrentData();
+			if(data.LineID != ""){
+				main.localData.records[data.LineID] = data;
+				main.saveState();
+			}
+		},
+		
+		/**
 		 * Add a record for data, and set record values
 		 * @param code int The corresponding code from dataMap.code
 		 * @param l The low value
@@ -494,9 +510,6 @@ var dataMap = {
 			$('#data-data-elements').empty();
 		},
 		
-		saveCurrentRecords : function(){
-		
-		},
 		/**
 		 * Private object for holding id=>field_name of dataMap.data object.
 		 */
@@ -547,6 +560,16 @@ var dataMap = {
 				data[typeCrack+'_H'] = high;
 				
 			});
+			
+			//add missing entries
+			for(var x in dataMap.data){
+				for(var y in ['_L','_M','_H']){
+					if(typeof data[x+y] == 'undefined'){
+						data[x+y] = "";
+					}
+				}
+			}
+			
 			return data;
 		 },
 		
@@ -655,6 +678,9 @@ var dataMap = {
 			
 			//write to the session Data
 			sessionStorage.sessionData = JSON.stringify(this.sessionData);
+			
+			//write localData to data store
+			localStorage.localData = JSON.stringify(this.localData);
 		},
 		sessionData : {
 			navActive : null,
@@ -862,10 +888,20 @@ var dataMap = {
 				
 				//alter the class (for display purposes) and bind a click event
 				$(main.mapWindow.b.f).addClass('infoWindow')
-					.find('#EditPoint').click(function(){
+				.find('#EditPoint').click(function(){
+					//clean up the HTML data area
+					main.htmlRemoveAllRecords();
+					
+					//get data from fusion or local data store if it exists.
+					//pulls from local if it exists, fusion tables otherwise
+					var fromFusion = (typeof main.localData.records[e.row.LineID.value] == "undefined");
+					var data = (fromFusion) ? e.row : main.localData.records[e.row.LineID.value];
+					
+					window.X = data;
+					
 					for(var key in dataMap.header){
 						try{
-							var entry = e.row[key].value;
+							var entry = (fromFusion) ? data[key].value : data[key];
 							var field = key;
 							$('#'+field).val(entry);
 						} catch(err){
@@ -873,25 +909,24 @@ var dataMap = {
 						}
 					}
 					
-					//clean up the HTML data area
-					main.htmlRemoveAllRecords();
-					
 					//cycle through all fusion table data
 					//and add the records into the HTML
 					for(var key in dataMap.data){
 						try{
-							var l = e.row[key + '_L'].value;
-							var m = e.row[key + '_M'].value;
-							var h = e.row[key + '_H'].value;
+							var l = (fromFusion) ? data[key + '_L'].value : data[key + '_L'];
+							var m = (fromFusion) ? data[key + '_M'].value : data[key + '_M'];
+							var h = (fromFusion) ? data[key + '_H'].value : data[key + '_H'];
 							var code = dataMap.data[key].code;
 							
 							if(l > 0 || m > 0 || h > 0){
+								
 								main.htmlAddRecordData(code,l,m,h);
 							}
 						} catch(err){
 							//do nothing
 						}
 					}
+					
 					//trigger the data tab and then show data-data sub nav
 					$('#data').click();
 					$('#data-data').click();
