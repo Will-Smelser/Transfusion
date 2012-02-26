@@ -485,13 +485,19 @@ var dataMap = {
 		/**
 		 * Add a record for data, and set record values
 		 * @param code int The corresponding code from dataMap.code
-		 * @param l The low value
-		 * @param m The medium value
-		 * @param h The high value
+		 * @param l string The low value
+		 * @param m string The medium value
+		 * @param h string The high value
+		 * @param fromFusion boolean If this is a fusion record or local record
 		 */
-		htmlAddRecordData : function(code,l,m,h){
+		htmlAddRecordData : function(code,l,m,h, fromFusion){
 			var $li = this.htmlAddRecord();
-			$li.children().first().val(code).next().val(l).next().val(m).next().val(h);
+			
+			if(fromFusion){
+				$li.children().first().val(code).next().val(l).next().val(m).next().val(h);
+			} else {
+				$li.addClass('local').children().first().val(code).next().val(l).next().val(m).next().val(h);
+			}
 		},
 		
 		/**
@@ -920,7 +926,7 @@ var dataMap = {
 							
 							if(l > 0 || m > 0 || h > 0){
 								
-								main.htmlAddRecordData(code,l,m,h);
+								main.htmlAddRecordData(code,l,m,h,fromFusion);
 							}
 						} catch(err){
 							//do nothing
