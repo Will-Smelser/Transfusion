@@ -191,17 +191,22 @@ input.btn:hover{
 	border-bottom:solid #000 2px;
 }
 #pending-container-inner .header .child{
-	width:150px;
+	width:160px;
 	display:inline-block;
 	float:left;
 	overflow:hidden;
+	border:solid #FFF 1px;
 }
 #pending-container-inner .body .child{
-	width:150px;
+	width:160px;
 	display:inline-block;
 	float:left;
 	overflow:hidden;
 	padding-top:10px;
+	border:solid #FFF 1px;
+}
+#pending-container-inner .diff{
+	background-color:#CCC;
 }
 </style>
 
@@ -558,6 +563,9 @@ var dataMap = {
 			}
 		},
 		
+		/**
+		 * Builds the html for pending changes page
+		 */
 		htmlShowPendingChanges : function(){
 			var $cont = $('#pending-container-inner');
 			var $clear = $(document.createElement('div')).attr('style','clear:both');
@@ -570,6 +578,7 @@ var dataMap = {
 				var $cbox = $(document.createElement('input')).attr('type','checkbox').val(x).attr('checked','true');
 				var $wrap = $(document.createElement('div')).addClass('wrapper');
 				var record = main.localData.records[x];
+				var orig = main.localData.origs[x];
 			
 				//x is the LineID
 				$h = $(document.createElement('div')).addClass('head');
@@ -579,7 +588,20 @@ var dataMap = {
 				
 				for(var y in dataMap.header){
 					var str = y + ':' + record[y];
-					$div = $(document.createElement('div')).addClass('child');
+					var $div = {};
+					
+					if(orig[y] != record[y] && !(typeof orig[y] == 'undefined' && record[y] == '')){
+						var temp = (typeof orig[y] == 'undefined'
+										|| orig[y] == ''
+									) ? 'N/A' : orig[y];
+						$div = $(document.createElement('div')).addClass('child').
+							attr('title',temp).addClass('diff').click(function(){
+								var temp = $(this).attr('title');
+								alert('origional value: '+temp);
+							});
+					} else {
+						$div = $(document.createElement('div')).addClass('child');
+					}
 					$div.html(str);
 					$head.append($div);
 				}
@@ -593,7 +615,22 @@ var dataMap = {
 					){
 						for(var i in opts){
 							var str = y + opts[i] + ':' + record[y+opts[i]];
-							$div = $(document.createElement('div')).addClass('child');
+							var $div = {};
+							if( orig[y+opts[i]] != record[y+opts[i]]
+								&& !(typeof orig[y+opts[i]] == 'undefined' && record[y+opts[i]] == '')
+							){
+								var temp = (typeof orig[y+opts[i]] == 'undefined'
+										|| orig[y+opts[i]] == ''
+									) ? 'N/A' : orig[y+opts[i]];
+								
+								$div = $(document.createElement('div')).addClass('child').
+									addClass('diff').attr('title',temp).click(function(e){
+										var temp = $(this).attr('title');
+										alert('origional value: '+temp);
+									});
+							} else {
+								$div = $(document.createElement('div')).addClass('child');
+							}
 							$div.html(str);
 							$body.append($div);
 						}
@@ -811,8 +848,11 @@ var dataMap = {
 			if(typeof sessionStorage.sessionData == 'string'){
 				this.sessionData = JSON.parse(sessionStorage.sessionData);
 			}
-			if(typeof localStorage.localData == 'string'){
-				this.localData = JSON.parse(localStorage.localData);
+			if(typeof localStorage.update == 'string'){
+				this.localData.records = JSON.parse(localStorage.update);
+			}
+			if(typeof localStorage.orig == 'string'){
+				this.localData.origs = JSON.parse(localStorage.orig);
 			}
 			
 			$('#'+this.sessionData.navActive).trigger('click');
@@ -829,13 +869,31 @@ var dataMap = {
 			sessionStorage.sessionData = JSON.stringify(this.sessionData);
 			
 			//write localData to data store
-			localStorage.localData = JSON.stringify(this.localData);
+			localStorage.update = JSON.stringify(this.localData.records);
+			localStorage.orig = JSON.stringify(this.localData.origs);
 		},
 		sessionData : {
 			navActive : null,
 		},
+		
+		/**
+		 * Data is stored in this object
+		 * Used by the froms for before push
+		 */
 		localData : {
-			records : {}
+			/**
+			 * Modified records are stored here
+			 * format:
+			 *     {<LineID>:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},...}
+			 */
+			records : {},
+			/**
+			 * Origional data records from fusion mapped.
+			 * Populated when the "Edit" button is clicked
+			 * format:
+			 *     {<LineID>:{LineID:<LineID>,ALLIG_L,ALLIG_M,ALLIG_M....FIELD36_H},...}
+			 */
+			origs : {}
 		},
 		
 		/**
@@ -1038,6 +1096,9 @@ var dataMap = {
 				//alter the class (for display purposes) and bind a click event
 				$(main.mapWindow.b.f).addClass('infoWindow')
 				.find('#EditPoint').click(function(){
+					//holds the original fusion tables values
+					var orig = {};
+				
 					//clean up the HTML data area
 					main.htmlRemoveAllRecords();
 					
@@ -1046,13 +1107,16 @@ var dataMap = {
 					var fromFusion = (typeof main.localData.records[e.row.LineID.value] == "undefined");
 					var data = (fromFusion) ? e.row : main.localData.records[e.row.LineID.value];
 					
-					window.X = data;
-					
 					for(var key in dataMap.header){
 						try{
 							var entry = (fromFusion) ? data[key].value : data[key];
 							var field = key;
+							
+							//set the forms value
 							$('#'+field).val(entry);
+							
+							//update original data
+							orig[field] = e.row[key].value;
 						} catch(err){
 							//do nothing
 						}
@@ -1067,14 +1131,23 @@ var dataMap = {
 							var h = (fromFusion) ? data[key + '_H'].value : data[key + '_H'];
 							var code = dataMap.data[key].code;
 							
-							if(l > 0 || m > 0 || h > 0){
-								
+							if(l != '' || m != '' || h != ''){	
 								main.htmlAddRecordData(code,l,m,h,fromFusion);
 							}
+							
+							//add to origional data
+							orig[key+'_L'] = e.row[key+'_L'].value;
+							orig[key+'_M'] = e.row[key+'_M'].value;
+							orig[key+'_H'] = e.row[key+'_H'].value;
+							
 						} catch(err){
 							//do nothing
 						}
 					}
+					
+					//update local data
+					main.localData.origs[orig.LineID] = orig;
+					main.saveState();
 					
 					//trigger the data tab and then show data-data sub nav
 					$('#data').click();
