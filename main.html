@@ -158,6 +158,38 @@ input.btn:hover{
 	border-right:solid black 2px;
 	border-bottom:solid black 2px;
 }
+
+/* PENDING CHANGES PAGE */
+#pending-container{
+	width:500px;
+	margin-left:auto;
+	margin-right:auto;
+	overflow:auto;
+	font-size:12px;
+}
+#pending-container .wrapper{
+	padding-top:15px;
+}
+#pending-container .head{
+	font-weight:bold;
+}
+#pending-container .header{
+	border-top:solid #EEA41F 2px;
+	border-bottom:solid #000 2px;
+}
+#pending-container .header .child{
+	width:150px;
+	display:inline-block;
+	float:left;
+	overflow:hidden;
+}
+#pending-container .body .child{
+	width:150px;
+	display:inline-block;
+	float:left;
+	overflow:hidden;
+	padding-top:10px;
+}
 </style>
 
 </head>
@@ -413,6 +445,11 @@ var dataMap = {
 			$('#data').click(function(){
 				$('#data-header').click();
 			});
+			
+			//specific click event for #pending
+			$('#pending').click(function(){
+				main.htmlShowPendingChanges();
+			});
 				
 			//add new data entries
 			$('#data-data-add').click(obj.htmlAddRecord);
@@ -500,6 +537,60 @@ var dataMap = {
 			}
 		},
 		
+		htmlShowPendingChanges : function(){
+			var $cont = $('#pending-container');
+			var $clear = $(document.createElement('div')).attr('style','clear:both');
+			
+			$cont.empty();
+			
+			var opts = ['_L','_M','_H'];
+			
+			for(var x in main.localData.records){
+				var $wrap = $(document.createElement('div')).addClass('wrapper');
+				var record = main.localData.records[x];
+			
+				//x is the LineID
+				$h = $(document.createElement('div')).addClass('head').html('LineID: '+x);
+				$head = $(document.createElement('div')).addClass('header');
+				$body = $(document.createElement('div')).addClass('body');
+				
+				for(var y in dataMap.header){
+					var str = y + ':' + record[y];
+					$div = $(document.createElement('div')).addClass('child');
+					$div.html(str);
+					$head.append($div);
+				}
+				
+				for(var y in dataMap.data){
+					if(	(
+						(typeof record[y+'_L'] != 'undefined' && (record[y+'_L'] != '')) ||
+						(typeof record[y+'_M'] != 'undefined' && (record[y+'_M'] != '')) ||
+						(typeof record[y+'_H'] != 'undefined' && (record[y+'_H'] != ''))
+						) 
+					){
+						for(var i in opts){
+							var str = y + opts[i] + ':' + record[y+opts[i]];
+							$div = $(document.createElement('div')).addClass('child');
+							$div.html(str);
+							$body.append($div);
+						}
+					}
+				}
+				
+				if($body.html() == '') $body.html('NO DATA');
+				
+				$head.append($clear.clone());
+				$body.append($clear.clone());
+				
+				$wrap.append($h);
+				$wrap.append($head);
+				$wrap.append($body);
+				
+				$cont.append($wrap);
+			}
+			
+		},
+		
 		/**
 		 * Remove an HTML entry from data list
 		 * @param id Int the unique id for the element
@@ -568,10 +659,11 @@ var dataMap = {
 			});
 			
 			//add missing entries
+			var opts = ['_L','_M','_H'];
 			for(var x in dataMap.data){
-				for(var y in ['_L','_M','_H']){
-					if(typeof data[x+y] == 'undefined'){
-						data[x+y] = "";
+				for(var y in opts){
+					if(typeof data[x+opts[y]] == 'undefined'){
+						data[x+opts[y]] = "";
 					}
 				}
 			}
