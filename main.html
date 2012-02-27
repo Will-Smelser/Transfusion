@@ -160,6 +160,9 @@ input.btn:hover{
 }
 
 /* PENDING CHANGES PAGE */
+#pending-container .btn{
+	width:auto;
+}
 #pending-container{
 	width:500px;
 	margin-left:auto;
@@ -167,23 +170,33 @@ input.btn:hover{
 	overflow:auto;
 	font-size:12px;
 }
-#pending-container .wrapper{
+#pending-container-inner{
+	padding-bottom:15px;
+}
+#pending-container-inner input{
+	margin:0px;
+	padding:0px;
+	margin-right:10px;
+	width:20px;
+	height:15px;
+}
+#pending-container-inner .wrapper{
 	padding-top:15px;
 }
-#pending-container .head{
+#pending-container-inner .head{
 	font-weight:bold;
 }
-#pending-container .header{
+#pending-container-inner .header{
 	border-top:solid #EEA41F 2px;
 	border-bottom:solid #000 2px;
 }
-#pending-container .header .child{
+#pending-container-inner .header .child{
 	width:150px;
 	display:inline-block;
 	float:left;
 	overflow:hidden;
 }
-#pending-container .body .child{
+#pending-container-inner .body .child{
 	width:150px;
 	display:inline-block;
 	float:left;
@@ -279,7 +292,9 @@ input.btn:hover{
 		</div>
 	</div>
 	<div class="inner" id="pending-container" style="display:none">
-		<h2>Pending Changes...</h2>
+		<div id="pending-container-inner"></div>
+		<input type="button" class="round btn" value="Push Selected" id="pending-push" />
+		<input type="button" class="round btn" value="Delete Selected" id="pending-delete" />
 	</div>
 </div>
 
@@ -441,14 +456,20 @@ var dataMap = {
 				});
 			});
 			
-			//specific click event for #data
-			$('#data').click(function(){
-				$('#data-header').click();
-			});
-			
 			//specific click event for #pending
 			$('#pending').click(function(){
 				main.htmlShowPendingChanges();
+			});
+			$('#pending-delete').click(function(){
+				main.htmlPendingDelete();
+			});
+			$('#pending-push').click(function(){
+				main.htmlPendingPush();
+			});
+			
+			//specific click event for #data
+			$('#data').click(function(){
+				$('#data-header').click();
 			});
 				
 			//add new data entries
@@ -538,7 +559,7 @@ var dataMap = {
 		},
 		
 		htmlShowPendingChanges : function(){
-			var $cont = $('#pending-container');
+			var $cont = $('#pending-container-inner');
 			var $clear = $(document.createElement('div')).attr('style','clear:both');
 			
 			$cont.empty();
@@ -546,11 +567,13 @@ var dataMap = {
 			var opts = ['_L','_M','_H'];
 			
 			for(var x in main.localData.records){
+				var $cbox = $(document.createElement('input')).attr('type','checkbox').val(x).attr('checked','true');
 				var $wrap = $(document.createElement('div')).addClass('wrapper');
 				var record = main.localData.records[x];
 			
 				//x is the LineID
-				$h = $(document.createElement('div')).addClass('head').html('LineID: '+x);
+				$h = $(document.createElement('div')).addClass('head');
+				$h.append($cbox).append('<span>LineID: '+x+'</span>');
 				$head = $(document.createElement('div')).addClass('header');
 				$body = $(document.createElement('div')).addClass('body');
 				
@@ -589,6 +612,34 @@ var dataMap = {
 				$cont.append($wrap);
 			}
 			
+		},
+		
+		_getSelectedPending : function(){
+			return $('#pending-container-inner input:checked');
+		},
+		/**
+		 * Push/Save selected pending changes
+		 */
+		htmlPendingPush : function(){
+			$pendings = main._getSelectedPending();
+		},
+		
+		/**
+		 * Delete selected pending changes
+		 */
+		htmlPendingDelete : function(){
+			$pendings = main._getSelectedPending();
+			window.X = $pendings;
+			$pendings.each(function(){
+				id = $(this).val();
+				
+				//remove from local datastore
+				delete(main.localData.records[id]);
+				main.saveState();
+				
+				//remove the HTML element
+				$(this).parent().parent().detach();
+			})
 		},
 		
 		/**
