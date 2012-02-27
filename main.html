@@ -33,7 +33,7 @@ body,html,#content{
 }
 #navigation ul, .sub-nav ul{border:none;padding:0px;margin:0px;}
 #navigation li{
-	padding:8px 15px;
+	padding:8px 15px 5px 15px;
 	margin:0px;
 	list-style:none;
 	
@@ -48,12 +48,12 @@ body,html,#content{
 	background-color:#EEA41F;
 }
 #navigation li:hover{
-	background-color:#333;
+	background-color:#EEA41F;
 }
 #map-container,#data-container,#login-container,#pending-container, #mselect-container{
 	width:100%;
 	height:100%;
-	margin-top:35px
+	margin-top:40px;
 }
 
 /*sub navigations*/
@@ -65,7 +65,7 @@ body,html,#content{
 	margin:2px 0px 4px 4px;
 	list-style:none;
 	
-	font-size:12px;
+	font-size:8px;
 	font-weight:bold;
 	color:#FFF;
 	
@@ -87,13 +87,13 @@ form .title{
 	padding:0px;
 	margin:0px;
 	line-height:16px;
-	width:125px;
+	width:auto;
 }
 form .dropdown{
 	font-weight:bold;
 	font-size:12px;
 	color:#000000;
-	padding:0px;
+	padding:5px;
 	margin:0px;
 	line-height:16px;
 	width:125px;
@@ -104,8 +104,9 @@ input, select{
 	background-color:#AAA;
 	border:none;
 	font-weight:bold;
-	width:125px;
-	height:30px;
+	width:135px;
+	padding:5px;
+	
 }
 .round{
 	border-radius:3px;
@@ -113,7 +114,7 @@ input, select{
 }
 input.btn{
 	padding:4px;
-	font-size:16px;
+	font-size:12px;
 	font-weight:bold;
 	color:#FFF;
 	background-color:#333;
@@ -209,6 +210,9 @@ input.btn:hover{
 	background-color:#CCC;
 	cursor:pointer;
 }
+#mapselect{
+	width:auto;
+}
 </style>
 
 </head>
@@ -224,11 +228,10 @@ input.btn:hover{
 	<div class="inner" id="mselect-container" style="display:none;">
 		<div style="margin:0px auto;max-width:400px;">
 			<form name="drop_list">
-				<div class="title">LOCATIONS
-					<select name ="mapselect" id="mapselect" class="dropdown">
-					</select>
+				<div class="title">LOCATIONS</div>
+				<select name ="mapselect" id="mapselect" class="dropdown">
+				</select>
 				
-				</div> 
 			</form>
 		</div>
 	</div> 
@@ -240,7 +243,7 @@ input.btn:hover{
 				<li id="data-data">Data</li>
 			</ul>
 		</div>
-		<div class="inner" id="data-header-container" style="margin:0px auto;max-width:400px;">
+		<div class="inner" id="data-header-container" style="margin:0px auto;max-width:600px;">
 			<form id="data-form">
 				<input type="hidden" name="LineID" id="LineID" value="" />
 				<input type="hidden" name="UPDATED_BY" id="UPDATED_BY" value="" />
@@ -273,7 +276,7 @@ input.btn:hover{
 			</form>
 		</div>
 		<div class="inner" id="data-data-container" style="display:none">
-			<div style="margin-left:auto;margin-right:auto;width:500px">
+			<div style="margin-left:auto;margin-right:auto;max-width:600px">
 			<form id="data-data-form">
 				<ul id="data-data-elements"></ul>
 				<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
@@ -303,8 +306,6 @@ input.btn:hover{
 		<input type="button" class="round btn" value="Delete Selected" id="pending-delete" />
 	</div>
 </div>
-
-<div id="current_point" style="width:50px;height:50px;background-color:red;display:none;position:absolute;"></div>
 
 <script>
 $(document).ready(function(){
@@ -429,16 +430,16 @@ var dataMap = {
 			obj.$navs.click(function(){
 				var $local = $(this);
 				obj.$current = $(this);
-				$('#'+obj.$navs.filter('.active').attr('id')+'-container').fadeOut(function(){
-					if($local.attr('id') == "map"){
-						//add a callback for fixing map
-						$('#'+$local.attr('id')+"-container").fadeIn(function(){
-							$(this).css('width','99%').css('width','100%');
-						});
-					}else{
-						$('#'+$local.attr('id')+"-container").fadeIn();
-					}
-				});
+				$('#'+obj.$navs.filter('.active').attr('id')+'-container').hide();
+				if($local.attr('id') == "map"){
+					//add a callback for fixing map
+					
+					$('#'+$local.attr('id')+"-container").show().css('width','99%').css('width','100%');
+					
+				}else{
+					$('#'+$local.attr('id')+"-container").show();
+				}
+				
 				
 				obj.$navs.removeClass('active');
 				$local.addClass('active');
