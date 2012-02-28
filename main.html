@@ -50,7 +50,7 @@ body,html,#content{
 #navigation li:hover{
 	background-color:#EEA41F;
 }
-#map-container,#data-container,#login-container,#pending-container, #mselect-container{
+#map-container,#login-container,#pending-container, #mselect-container{
 	width:100%;
 	height:100%;
 	margin-top:40px;
@@ -58,6 +58,7 @@ body,html,#content{
 
 /*sub navigations*/
 .sub-nav ul{
+	padding-top:40px;
 	background-color:#EEA41F;
 }
 .sub-nav li{
@@ -421,10 +422,14 @@ var dataMap = {
 		//navigation tab
 		$current: null,
 		
+		$mapWrapper: null,
+		
 		//called on document load
 		init:function(){
 			var obj = this;
 			obj.$navs = $('#navigation li');
+			
+			obj.$mapWrapper = $('#map-container');
 			
 			//main navigation
 			obj.$navs.click(function(){
@@ -433,8 +438,14 @@ var dataMap = {
 				$('#'+obj.$navs.filter('.active').attr('id')+'-container').hide();
 				if($local.attr('id') == "map"){
 					//add a callback for fixing map
+					$('#'+$local.attr('id')+"-container").show();
 					
-					$('#'+$local.attr('id')+"-container").show().css('width','99%').css('width','100%');
+					//the map may not have rendered, so just hide error
+					try{
+						google.maps.event.trigger(obj.map, 'resize')
+					}catch(e){
+						//do nothing
+					}
 					
 				}else{
 					$('#'+$local.attr('id')+"-container").show();
