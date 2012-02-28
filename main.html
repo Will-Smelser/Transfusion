@@ -4,10 +4,12 @@
 <title>Tranfusion Mapping</title>
 
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script> 
-<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<!--
+DO WE NEED THESE?
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-
+//-->
 <style>
 html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input,textarea,select{font-size:100%}legend{color:#000}
 window{
@@ -155,6 +157,8 @@ input.btn:hover{
 	
 	border-right:solid transparent 2px;
 	border-bottom:solid transparent 2px;
+	
+	font-size:12px;
 }
 .infoWindow input:hover{
 	border-right:solid black 2px;
@@ -446,11 +450,9 @@ var dataMap = {
 					}catch(e){
 						//do nothing
 					}
-					
 				}else{
 					$('#'+$local.attr('id')+"-container").show();
 				}
-				
 				
 				obj.$navs.removeClass('active');
 				$local.addClass('active');
@@ -460,6 +462,7 @@ var dataMap = {
 			
 			//subnavigations
 			$("#data-nav li").click(function(){
+			
 				$(this).parent().find('li').removeClass('active');
 				$(this).addClass('active');
 				
@@ -483,11 +486,6 @@ var dataMap = {
 			});
 			$('#pending-push').click(function(){
 				main.htmlPendingPush();
-			});
-			
-			//specific click event for #data
-			$('#data').click(function(){
-				$('#data-header').click();
 			});
 				
 			//add new data entries
@@ -663,7 +661,9 @@ var dataMap = {
 			}
 			
 		},
-		
+		/**
+		 * Private method for get all selected pending elements
+		 */
 		_getSelectedPending : function(){
 			return $('#pending-container-inner input:checked');
 		},
@@ -885,6 +885,10 @@ var dataMap = {
 			localStorage.update = JSON.stringify(this.localData.records);
 			localStorage.orig = JSON.stringify(this.localData.origs);
 		},
+		
+		/**
+		 * This is a local data store for this session
+		 */
 		sessionData : {
 			navActive : null,
 		},
