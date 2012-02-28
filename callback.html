@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>OAuth Callback Parser</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript">
+"use strict";
+/* Parse out parameters */
+$(document).ready(function() {
+	var params = {}, queryString = location.hash.substring(1), regex = /([^&=]+)=([^&]*)/g, m;
+	while (m = regex.exec(queryString)) {
+		params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+	}
+
+	if ('access_token' in params) {
+		console.log('access token: ' + params['access_token']);
+		console.log('token type: ' + params['token_type']);
+		console.log('expires in (seconds): ' + params['expires_in']);
+	} else {
+		console.log('Did not get a token! error: ' + params['error']);
+	}
+
+	/* Validate the token */
+	$.ajax({
+		url: 'https://www.googleapis.com/oauth2/v1/tokeninfo',
+		data: { access_token: params['access_token'] },
+		success: function(data) {
+			// to validate verify "audience" matches our "client_id"
+			// and "expires_in" > 0
+			$.each(data, function(i,item) {
+				console.log(i + ': ' + item);
+			});
+		}});
+
+	/* Calls like this should work now:
+	$.get('https://www.googleapis.com/oauth2/v1/userinfo',
+		{ access_token: params['access_token'] }
+	);
+	*/
+});
+</script>
+</head>
+<body>
+<p>Parse page.</p>
+</body>
+</html>
