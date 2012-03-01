@@ -55,7 +55,7 @@ body,html,#content{
 	background-color:#EEA41F;
 }
 #navigation li:hover{
-	background-color:#EEA41F;
+	/*background-color:#EEA41F;*/
 }
 #map-container,#login-container,#pending-container, #mselect-container{
 	width:100%;
@@ -223,13 +223,18 @@ input.btn:hover{
 #mapselect{
 	width:auto;
 }
+#data-header li{
+	display:inline-block;
+	text-align:center;
+	font-size:14px;
+}
 </style>
 
 </head>
 <body>
 <div id="navigation" class="">
 	<ul>
-		<li id="mselect">Map Select</li><li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li><a id="login">Login/Logout</a></li>
+		<li id="mselect">Map Select</li><li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li><a id="login" class="ignore">Login/Logout</a></li>
 	</ul>	
 </div>
 <div id="content">
@@ -247,13 +252,7 @@ input.btn:hover{
 	</div> 
 	
 	<div id="data-container" style="display:none;">
-		<div class="sub-nav" id="data-nav">
-			<ul>
-				<li id="data-header" class="active">Information</li>
-				<li id="data-data">Data</li>
-			</ul>
-		</div>
-		<div class="inner" id="data-header-container" style="margin:0px auto;max-width:600px;">
+		<div class="inner" id="data-container" style="margin:40px auto 0px auto;max-width:600px;">
 			<form id="data-form">
 				<input type="hidden" name="LineID" id="LineID" value="" />
 				<input type="hidden" name="UPDATED_BY" id="UPDATED_BY" value="" />
@@ -283,15 +282,20 @@ input.btn:hover{
 					<input class="round" type="text" name="dateinspected" id="UPDATED_DATE" />
 				</div>
 				<div style="clear:both"></div>
-			</form>
-		</div>
-		<div class="inner" id="data-data-container" style="display:none">
-			<div style="margin-left:auto;margin-right:auto;max-width:600px">
-			<form id="data-data-form">
-				<ul id="data-data-elements"></ul>
-				<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
-				<input id="data-data-save" type="button" class="round btn save" style="width:auto;" value="Save" />
-			</form>
+			
+				<div style="margin:10px auto 0px auto;max-width:600px">
+				<ul id="data-header">
+					<li style="width:155px;"><div class="title">DATA</div></li>
+					<li style="width:85px;">High</li>
+					<li style="width:85px;">Medium</li>
+					<li style="width:85px;">Low</li>
+				</ul>
+				<div id="data-data-form">
+					<ul id="data-data-elements"></ul>
+					<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
+					<input id="data-data-save" type="button" class="round btn save" style="width:auto;" value="Save" />
+				</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -443,28 +447,28 @@ var dataMap = {
 			obj.$mapWrapper = $('#map-container');
 			
 			//main navigation
-			obj.$navs.click(function(){
+			obj.$navs.filter(':not(.ignore)').click(function(){
 				var $local = $(this);
 				obj.$current = $(this);
+				
 				$('#'+obj.$navs.filter('.active').attr('id')+'-container').hide();
+				
+				$('#'+$local.attr('id')+"-container").show();
+				
 				if($local.attr('id') == "map"){
-					//add a callback for fixing map
-					$('#'+$local.attr('id')+"-container").show();
-					
 					//the map may not have rendered, so just hide error
 					try{
-						google.maps.event.trigger(obj.map, 'resize')
+						google.maps.event.trigger(obj.map, 'resize');
 					}catch(e){
 						//do nothing
 					}
-				}else{
-					$('#'+$local.attr('id')+"-container").show();
 				}
 				
 				obj.$navs.removeClass('active');
 				$local.addClass('active');
 				
 				obj.saveState.call(obj);
+				
 			});
 			
 			//subnavigations
@@ -495,14 +499,11 @@ var dataMap = {
 				main.htmlPendingPush();
 			});
 			
-			$('a#login').attr('href',
-				'https://accounts.google.com/o/oauth2/auth' + '?' + $.param({
-				client_id: '117853050345.apps.googleusercontent.com',
-				response_type: 'token',
-				redirect_uri: window.location.pathname + '/callback.html',
-				scope: 'https://www.googleapis.com/auth/fusiontables'
-			}));
-
+			main.setLogin();
+			$('#login').click(function(){
+				main.doLogin();
+			});
+			
 			//add new data entries
 			$('#data-data-add').click(obj.htmlAddRecord);
 			
@@ -523,6 +524,50 @@ var dataMap = {
 				.val('Delete').attr('type','button');
 			
 			obj.restoreState();
+		},
+		setLogin : function(){
+			if(main.isLoggedIn()){
+				$('#login').html('Logout');
+			} else {
+				$('#login').html('Login');
+			}
+		},
+		isLoggedIn : function(){
+			var loggedin = false;
+			if(typeof sessionStorage.loginExpire == "string"){
+				var expire = parseInt(sessionStorage.loginExpire);
+				var time = new Date().getTime() / 1000;
+				loggedin = (expire > time);
+			}
+			return loggedin;
+		},
+		doLogin : function(){
+			if(main.isLoggedIn()){
+				main.logout();
+			} else {
+				main.login();
+			}
+		},
+		login : function(){
+			
+			var temp = window.location.pathname.split('/');
+			temp.pop();
+			temp = temp.join('/');
+			
+			
+			var url = 'https://accounts.google.com/o/oauth2/auth' + '?' + $.param({
+				client_id: '117853050345.apps.googleusercontent.com',
+				response_type: 'token',
+				redirect_uri: 'http://'+document.domain + temp + '/callback.php',
+				scope: 'https://www.googleapis.com/auth/fusiontables'
+			});
+			document.location.href=url;
+		},
+		logout : function(){
+			delete(sessionStorage.login);
+			delete(sessionStorage.loginExpire);
+			$('#login').html('Login');
+			alert('You have been logged out.');
 		},
 		//HTML drop down list for data
 		$htmlDD : null,
@@ -568,6 +613,7 @@ var dataMap = {
 			if(data.LineID != ""){
 				main.localData.records[data.LineID] = data;
 				main.saveState();
+				alert('Data Saved.  See "Pending Changes" to finalize changes.');
 			}
 		},
 		
@@ -873,6 +919,7 @@ var dataMap = {
 		 * @TO-DO Add all the Map stuff
 		 */
 		restoreState:function(){
+		
 			//get the data
 			if(typeof sessionStorage.sessionData == 'string'){
 				this.sessionData = JSON.parse(sessionStorage.sessionData);
@@ -885,6 +932,7 @@ var dataMap = {
 			}
 			
 			$('#'+this.sessionData.navActive).trigger('click');
+			
 		},
 		/**
 		 * Should take a snapshot and store this locally
@@ -1068,13 +1116,15 @@ var dataMap = {
 		 */
 		initMap : function(){
 			var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
-			this.map = new google.maps.Map(document.getElementById('map-container'), {
+			
+			this.map = new google.maps.Map(main.$mapWrapper[0], {
 				center: city,
 				zoom: 17,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
 				streetViewControl: false,			  
 			});
+			
 		},
 		
 		/**
@@ -1083,6 +1133,13 @@ var dataMap = {
 		 */
 		initFusionLayer : function(id){
 			var obj = this;
+			
+			try{
+				this.fusion.setMap(null);
+			}catch(e){
+				//do nothing
+			}
+			
 			this.fusion = new google.maps.FusionTablesLayer({
 			query: {
 				select: 'geometry',
