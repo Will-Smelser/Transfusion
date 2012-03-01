@@ -26,6 +26,7 @@ curl_close($ch);
 
 //store this in session on the server as well
 $_SESSION['login'] = json_decode($output,true);
+$_SESSION['login']['token'] = $_GET['access_token'];
 $_SESSION['login']['start'] = time();
 ?>
 
@@ -34,7 +35,7 @@ $_SESSION['login']['start'] = time();
 <script>
 
 //store the data in session
-sessionStorage.login = JSON.stringify(<?php echo $output; ?>);
+sessionStorage.login = <?php echo json_encode($_SESSION['login']); ?>;
 sessionStorage.loginExpire = <?php echo $_SESSION['login']['expires_in']+$_SESSION['login']['start']; ?>;
 
 //forward back to main

@@ -257,6 +257,7 @@ input.btn:hover{
 				<input type="hidden" name="LineID" id="LineID" value="" />
 				<input type="hidden" name="UPDATED_BY" id="UPDATED_BY" value="" />
 				<input type="hidden" name="UPDATED_DATE" id="UPDATED_DATE" value="" />
+				<input type="hidden" name="ROWID" id="ROWID" value=""/>
 				
 				<div style="float:left;width:50%">
 					<div class="title">SURVEY</div>
@@ -340,6 +341,7 @@ var dataMap = {
 		'UPDATED_DATE':'',
 		//'geometry':'',
 		//'COMMENT':'',
+		'ROWID':'',//default value from fusion
 		},
 		images : {
 		'SITE_IMAGE_1':'',
@@ -471,22 +473,6 @@ var dataMap = {
 				
 			});
 			
-			//subnavigations
-			$("#data-nav li").click(function(){
-			
-				$(this).parent().find('li').removeClass('active');
-				$(this).addClass('active');
-				
-				var id = $(this).attr('id')+'-container';
-				
-				$(this).parent().parent().parent().find('.inner').each(function(){
-					if($(this).attr('id') == id){
-						$(this).show();
-					}else{
-						$(this).hide();
-					}
-				});
-			});
 			
 			//specific click event for #pending
 			$('#pending').click(function(){
@@ -532,6 +518,7 @@ var dataMap = {
 				$('#login').html('Login');
 			}
 		},
+		loginInfo : null,
 		isLoggedIn : function(){
 			var loggedin = false;
 			if(typeof sessionStorage.loginExpire == "string"){
@@ -539,11 +526,17 @@ var dataMap = {
 				var time = new Date().getTime() / 1000;
 				loggedin = (expire > time);
 			}
+			
+			if(loggedin){
+				main.loginInfo = JSON.parse(sessionStorage.login);
+			} else {
+				main._logout();
+			}
 			return loggedin;
 		},
 		doLogin : function(){
 			if(main.isLoggedIn()){
-				main.logout();
+				main._logout();
 			} else {
 				main.login();
 			}
@@ -563,9 +556,13 @@ var dataMap = {
 			});
 			document.location.href=url;
 		},
-		logout : function(){
+		_logout : function(){
 			delete(sessionStorage.login);
 			delete(sessionStorage.loginExpire);
+			main.loginInfo = null;
+		},
+		logout : function(){
+			main._logout();
 			$('#login').html('Login');
 			alert('You have been logged out.');
 		},
@@ -732,15 +729,37 @@ var dataMap = {
 		 * Push/Save selected pending changes
 		 */
 		htmlPendingPush : function(){
-			$pendings = main._getSelectedPending();
+			if(!main.isLoggedIn()){
+				alert('You must be logged in.');
+				return;
+			}
+		
+			var $pendings = main._getSelectedPending();
+			var base = "https://www.google.com/fusiontables/api/query?sql=";
+			
+			$pendings.each(function(){
+				var sql = "UPDATE%20" + main.fusion.query.from + "%20SET%20";
+				var entry = main.localData.records[$(this).val()];
+				
+				for(var x in entry){
+					if(x != "LineID"){
+						sql += x + '="' + entry[x] + '",';
+					}
+				}
+				sql = sql.substr(0,sql.length-1);//remove comma
+				
+				sql += "%20WHERE%20LineID=" + entry.LineID;
+				
+				$.post(base+sql+"&token="+main.loginInfo.token);
+			});
 		},
 		
 		/**
 		 * Delete selected pending changes
 		 */
 		htmlPendingDelete : function(){
-			$pendings = main._getSelectedPending();
-			window.X = $pendings;
+			var $pendings = main._getSelectedPending();
+			
 			$pendings.each(function(){
 				id = $(this).val();
 				
