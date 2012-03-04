@@ -750,7 +750,7 @@ var dataMap = {
 				
 				sql += "%20WHERE%20LineID=" + entry.LineID;
 				
-				$.post(base+sql+"&token="+main.loginInfo.token);
+				$.post(base+sql,{headers:"Authorization: GoogleLogin auth="+main.loginInfo.token});
 			});
 		},
 		
