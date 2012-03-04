@@ -341,7 +341,6 @@ var dataMap = {
 		'UPDATED_DATE':'',
 		//'geometry':'',
 		//'COMMENT':'',
-		'ROWID':'',//default value from fusion
 		},
 		images : {
 		'SITE_IMAGE_1':'',
@@ -735,22 +734,38 @@ var dataMap = {
 			}
 		
 			var $pendings = main._getSelectedPending();
-			var base = "https://www.google.com/fusiontables/api/query?sql=";
+			//var base = "https://www.google.com/fusiontables/api/query?sql=";
+			var base = "process.php?action=update";
 			
 			$pendings.each(function(){
-				var sql = "UPDATE%20" + main.fusion.query.from + "%20SET%20";
+				var sql = "UPDATE " + main.fusion.query.from + " SET ";
 				var entry = main.localData.records[$(this).val()];
 				
 				for(var x in entry){
-					if(x != "LineID"){
-						sql += x + '="' + entry[x] + '",';
+					if(x != "LineID" && x != "FROM" && x != "TO" && x !="WHERE"){
+						sql += '`' + x + '`=\'' + entry[x] + '\',';
 					}
 				}
 				sql = sql.substr(0,sql.length-1);//remove comma
 				
-				sql += "%20WHERE%20LineID=" + entry.LineID;
+				//sql += "%20WHERE%20LineID=" + entry.LineID;
 				
-				$.post(base+sql,{headers:"Authorization: GoogleLogin auth="+main.loginInfo.token});
+				$.ajax(base,{
+						data:{
+							query:sql,
+							LineID:entry.LineID,
+							table:main.fusion.query.from,
+						},
+						type:"POST",
+						dataType:'json',
+						success:function(data){
+							window.X=data
+						},
+						error:function(err){
+							window.X=err;
+						}
+					}
+				);
 			});
 		},
 		
