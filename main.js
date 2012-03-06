@@ -525,24 +525,26 @@ var main = {
 				var parts = $(this).val().split('-');
 				var tbl = parts[0];
 				var line = parts[1];
-				
-				var fields = " ";
-				
-				try{
-					fields = (typeof main.schema[tbl] != 'object') ? '' :
-						'*start*,'+main.schema[tbl].join(',');
-				}catch(err){
-					//do nothing
-				}
 								
-				var sql = "UPDATE " + main.fusion.query.from + " SET ";
+				var sql = "";//"UPDATE " + main.fusion.query.from + " SET ";
 				var entry = main.localData.records[tbl][line];
 				
 				for(var x in entry){
-					if( x != "FROM" && x != "TO" && x !="WHERE"
-						&& (fields.indexOf(x) > 0 || fields.length < 10)
-					){
-						sql += '`' + x + '`=\'' + entry[x] + '\',';
+					if( x != "FROM" && x != "TO" && x !="WHERE" ){
+						//we have a schema to check against
+						if((typeof main.schema[tbl] != 'undefined' && main.schema[tbl].length > 0)){
+							if(typeof main.schema[tbl][x] != 'undefined'){
+								sql += '' + x + '=\'' + entry[x] + '\',';
+							} else {
+								//invalid field name
+								main._msgPush("Invalid field name.  Skipped("+
+										x+" in "+tbl+", "+line+")", true, true);
+							}
+						//no schema
+						} else {
+							sql += '' + x + '=\'' + entry[x] + '\',';
+						}
+						
 					}else{
 						//invalid field name
 						main._msgPush("Invalid field name.  Skipped("+
@@ -552,6 +554,12 @@ var main = {
 				sql = sql.substr(0,sql.length-1);//remove comma
 				
 				//sql += "%20WHERE%20LineID=" + entry.LineID;
+				
+				if(sql == ""){
+					main._msgPush("No valid fields to update (Error 002a).  Skipped("+
+							x+" in "+tbl+", "+line+")", true, true);
+					return;
+				}
 				
 				$.ajax(base,{
 						data:{
@@ -571,6 +579,12 @@ var main = {
 								}else if(data.code == 403){
 									main._msgPush('User does not have permission to edit table ('+
 											data.tableID+','+data.LineID+') (Error 403).',true,true);
+								}else if(data.code == 1){
+									main._msgPush('Failed to identify unique row id. ('+
+											data.tableID+','+data.LineID+') (Error 001).',true,true);
+								}else if(data.code == 2){
+									main._msgPush('No valid fields to update. ('+
+											data.tableID+','+data.LineID+') (Error 002).',true,true);
 								} else {
 									main._msgPush('Unknown error.',true,true);
 								}
@@ -1110,7 +1124,9 @@ var main = {
 				
 				//get data from fusion or local data store if it exists.
 				//pulls from local if it exists, fusion tables otherwise
-				var fromFusion = (typeof main.localData.records[fid][e.row.LineID.value] == "undefined");
+				
+				var fromFusion = (typeof main.localData.records[fid] == "undefined"
+						|| typeof main.localData.records[fid][e.row.LineID.value] == "undefined");
 				var data = (fromFusion) ? e.row : main.localData.records[fid][e.row.LineID.value];
 				
 				//set the position of the information window
