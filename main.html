@@ -253,7 +253,8 @@ input.btn:hover{
 <body>
 <div id="navigation" class="">
 	<ul>
-		<li id="mselect">Map Select</li><li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="login"><a>Login/Logout</a></li>
+		<li id="mselect">Map Select</li><li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="images">Images</li><li id="login"><a>Login/Logout</a></li>
+		<li style="float:right;" id="map-name" class="ignore">Map Name</li>
 	</ul>	
 </div>
 <div id="content">
@@ -269,7 +270,9 @@ input.btn:hover{
 			</form>
 		</div>
 	</div> 
-	
+	<div id="images-container" style="display:none;">
+		<iframe style="min-height:400px;width:100%;height:100%" src="">Iframes Not Supported</iframe>
+	</div>
 	<div id="data-container" style="display:none;">
 		<div class="inner" id="data-container" style="margin:40px auto 0px auto;max-width:600px;">
 			<div id="data-msg"></div>
@@ -278,20 +281,33 @@ input.btn:hover{
 				<input type="hidden" name="UPDATED_BY" id="UPDATED_BY" value="" />
 				<input type="hidden" name="UPDATED_DATE" id="UPDATED_DATE" value="" />
 				<input type="hidden" name="tableID" id="tableID" value=""/>
+				<input type="hidden" name="inspector" id="inspector" />
 				
 				<div style="float:left;width:50%">
+					<div class="title">BRANCH NAME</div>
+					<input class="round" type="text" name="BRANCH" id="BRANCH" />
+					
+					<div class="title">SECTION</div>
+					<input class="round" type="text" name="SECTION" id="SECTION" />
+					
+					<div class="title">SAMPLE NUMBER</div>
+					<input class="round" type="text" name="SAMPLE" id="SAMPLE" />
+					
+					<div class="title">PCI</div>
+					<input class="round" type="text" name="BRANCH" id="BRANCH" />
+					
 					<div class="title">SURVEY</div>
 					<input class="round" type="text" name="SURVEY" id="SURVEY" />
 					
-					<div class="title">FROM</div>
-					<input class="round" type="text" name="FROM" id="FROM" />
-					
-					<div class="title">TO</div>
-					<input class="round" type="text" name="TO" id="TO" />
 				</div>
 				
 				<div style="float:right;width:50%">
-					<input type="hidden" name="inspector" id="inspector" />
+
+					<div class="title">FROM</div>
+					<input class="round" type="text" name="_FROM" id="_FROM" />
+					
+					<div class="title">TO</div>
+					<input class="round" type="text" name="_TO" id="_TO" />
 					
 					<div class="title">SECTION WIDTH</div>
 					<input class="round" type="text" name="sectionwidth" id="WIDTH" />
