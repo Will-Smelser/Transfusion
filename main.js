@@ -5,21 +5,21 @@
  */
 var dataMap = {
 		header : {
-		'LineID':'',
-		'_FROM':'',
-		'_TO':'',
-		'WIDTH':'',
-		'LENGTH':'',
-		'SURVEY':'',
-		'_UPDATED_BY':'',
-		'_UPDATED_DATE':'',
-		'BRANCH':'',
-		'SECTION':'',
-		'SAMPLE':'',
-		'PCI':'',
+		'LineID':{meta:false},
+		'_FROM':{meta:true,name:'From'},
+		'_TO':{meta:true,name:'To'},
+		'WIDTH':{meta:true,name:'Width'},
+		'LENGTH':{meta:true,name:'Length'},
+		'SURVEY':{meta:true,name:'Survey'},
+		'_UPDATED_BY':{meta:false},
+		'_UPDATED_DATE':{meta:false},
+		'BRANCH':{meta:true,name:'Branch'},
+		'SECTION':{meta:true,name:'Section'},
+		'SAMPLE':{meta:true,name:'Sample'},
+		'PCI':{meta:true,name:'PCI'},
 		//'geometry':'',
 		//'COMMENT':'',
-		'tableID':''
+		'tableID':{meta:false}
 		},
 		images : {
 		'SITE_IMAGE_1':'',
@@ -1074,17 +1074,45 @@ var main = {
 		 */
 		initInfoWindow : function(){
 			this.mapWindow = new google.maps.InfoWindow({
-				content:"Edit point of interest?<br/><input id='EditPoint' type='button' value='Edit'/>"
+				content:"<h2>Information</h2><div id='window-data'></div><br/><input id='EditPoint' type='button' value='Edit'/>"
 			});
 		},
-		
+		updateInfoWindow : function(data){
+			var $rep = $('#window-data');
+			
+			for(var x in dataMap.header){
+				if(dataMap.header[x].meta 
+							&& typeof data[x] != 'undefined'){
+					if(typeof data[x] == 'object'){
+						$rep.append('<span class="title">'+dataMap.header[x].name+'</span>: '+data[x].value+'<br/>');
+					} else {
+						$rep.append('<span class="title">'+dataMap.header[x].name+'</span>: '+data[x]+'<br/>');
+					}
+				}
+			}
+			var image = "IMAGE";
+			if(data[image]){
+				if(typeof data[image] == 'object'){
+					$rep.append("<a onclick='$(\"#image\").click(function(){$(\"\").attr(\"src\",\""+data[image].value+"\");});'>View Images</a>");
+				} else {
+					$rep.append("<a onclick='$(\"#image\").click(function(){$(\"\").attr(\"src\",\""+data[image]+"\");});'>View Images</a>");
+				}
+			}
+		},
 		/**
 		 * Binds the click event for the current fusion table layer
 		 */
 		initFusionClickEvent : function(){
 			//bind the click event to fusion layer
 			google.maps.event.addListener(main.fusion, 'click', function(e) {
-			
+				//fusion tbale id
+				var fid = main.fusion.query.from;
+				
+				//get data from fusion or local data store if it exists.
+				//pulls from local if it exists, fusion tables otherwise
+				var fromFusion = (typeof main.localData.records[fid][e.row.LineID.value] == "undefined");
+				var data = (fromFusion) ? e.row : main.localData.records[fid][e.row.LineID.value];
+				
 				//set the position of the information window
 				//to the clicked on element
 				main.mapWindow.setPosition(e.latLng);
@@ -1101,9 +1129,6 @@ var main = {
 					//clean up the HTML data area
 					main.htmlRemoveAllRecords();
 					
-					//fusion tbale id
-					var fid = main.fusion.query.from;
-					
 					//begin data structure
 					if(typeof main.localData.records[fid] == "undefined"){
 						main.localData.records[fid] = {};
@@ -1112,10 +1137,6 @@ var main = {
 						main.localData.origs[fid] = {};
 					}
 					
-					//get data from fusion or local data store if it exists.
-					//pulls from local if it exists, fusion tables otherwise
-					var fromFusion = (typeof main.localData.records[fid][e.row.LineID.value] == "undefined");
-					var data = (fromFusion) ? e.row : main.localData.records[fid][e.row.LineID.value];
 					
 					for(var key in dataMap.header){
 						try{
@@ -1158,6 +1179,8 @@ var main = {
 						}
 					}
 					
+					
+					
 					//update local data
 					main.localData.origs[fid][orig.LineID] = orig;
 					main.saveState();
@@ -1167,6 +1190,7 @@ var main = {
 					$('#data-data').click();
 				});
 				
+				main.updateInfoWindow(data);
 			});
 		}
 	};
