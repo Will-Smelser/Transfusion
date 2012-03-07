@@ -57,7 +57,7 @@ body,html,#content{
 #map-container,#login-container,#pending-container, #mselect-container{
 	width:100%;
 	height:100%;
-	margin-top:40px;
+	margin:0px;
 }
 
 /*sub navigations*/
@@ -277,11 +277,12 @@ body{
 		<li id="map-name" class="ignore">&nbsp;</li>
 	</ul>	
 </div>
-<div id="content">
-	<div id="map-container">
+<div id="content" style="width:100%;height:100%">
+	<div id="map-container" style="padding-top:0px;height:100%;width:100%;overflow:hidden;">
+		<div id="map-sub-container" style="margin-top:35px;height:100%;width:100%"></div>
 	</div>
 	<div class="inner" id="mselect-container" style="display:none;">
-		<div style="margin:0px auto;max-width:400px;">
+		<div style="margin:0px auto;padding-top:40px;max-width:400px;">
 			<form name="drop_list">
 				<div class="title">LOCATIONS</div>
 				<select name ="mapselect" id="mapselect" class="dropdown">
@@ -291,7 +292,9 @@ body{
 		</div>
 	</div> 
 	<div id="images-container" style="display:none;">
-		<iframe style="min-height:400px;width:100%;height:99%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
+		<div style="padding-top:40px">
+			<iframe style="min-height:400px;width:100%;height:99%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
+		</div>
 	</div>
 	<div id="data-container" style="display:none;">
 		<div class="inner" id="data-container" style="margin:40px auto 0px auto;max-width:600px;">
@@ -357,7 +360,7 @@ body{
 		</div>
 	</div>
 	<div class="inner" id="login-container" style="display:none;">
-		<div style="margin:0px auto;max-width:400px;">
+		<div style="margin:0px auto;max-width:400px;padding-top:40px;">
 			<div id="login-msg" style="display:none"></div>
 			<form id="login-form">
 				<div class="title">EMAIL</div>
@@ -375,7 +378,7 @@ body{
 			</form>
 		</div>
 	</div>
-	<div class="inner" id="pending-container" style="display:none">
+	<div class="inner" id="pending-container" style="display:none;padding-top:40px;">
 		<div id="pending-msg" style="display:none"></div>
 		<div id="pending-container-inner"></div>
 		<input type="button" class="round btn" value="Push Selected" id="pending-push" />

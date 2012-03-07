@@ -124,7 +124,7 @@ var main = {
 			var obj = this;
 			obj.$navs = $('#navigation li');
 			obj.$current = $('#map');
-			obj.$mapWrapper = $('#map-container');
+			obj.$mapWrapper = $('#map-sub-container');
 			
 			//main navigation
 			obj.$navs.filter(':not(.ignore)').click(function(){
