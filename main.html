@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Tranfusion Mapping</title>
+<title>M.A.P.S.</title>
 
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script> 
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
@@ -83,7 +83,7 @@ body,html,#content{
 
 /*form stuff*/
 .inner{
-	padding:10px;
+	padding:0px;
 }
 form .title{
 	font-weight:bold;
@@ -202,7 +202,7 @@ input.btn:hover{
 	display:inline-block;
 	float:left;
 	overflow:hidden;
-	border:solid #FFF 1px;
+	border:solid transparent 1px;
 }
 #pending-container-inner .body .child{
 	width:160px;
@@ -210,7 +210,7 @@ input.btn:hover{
 	float:left;
 	overflow:hidden;
 	padding-top:10px;
-	border:solid #FFF 1px;
+	border:solid transparent 1px;
 }
 #pending-container-inner .diff{
 	background-color:#CCC;
@@ -254,6 +254,19 @@ input.btn:hover{
 	display:inline-block;
 	width:65px;
 }
+li#map-name{
+	float:right;
+	padding-right:90px;
+	background-image:url('logo-small.png');
+	background-position:top right;
+	background-repeat:no-repeat;
+	cursor:default;
+}
+body{
+	background-image: url('logo-nobg.png');
+	background-repeat: no-repeat;
+	background-position:center center;
+}
 </style>
 
 </head>
@@ -261,7 +274,7 @@ input.btn:hover{
 <div id="navigation" class="">
 	<ul>
 		<li id="mselect">Map Select</li><li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="images">Images</li><li id="login"><a>Login/Logout</a></li>
-		<li style="float:right;" id="map-name" class="ignore">Map Name</li>
+		<li id="map-name" class="ignore">&nbsp;</li>
 	</ul>	
 </div>
 <div id="content">
@@ -278,7 +291,7 @@ input.btn:hover{
 		</div>
 	</div> 
 	<div id="images-container" style="display:none;">
-		<iframe style="min-height:400px;width:100%;height:100%" src="">Iframes Not Supported</iframe>
+		<iframe style="min-height:400px;width:100%;height:99%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
 	</div>
 	<div id="data-container" style="display:none;">
 		<div class="inner" id="data-container" style="margin:40px auto 0px auto;max-width:600px;">

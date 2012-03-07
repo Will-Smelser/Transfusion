@@ -11,8 +11,8 @@ var dataMap = {
 		'WIDTH':{meta:true,name:'Width'},
 		'LENGTH':{meta:true,name:'Length'},
 		'SURVEY':{meta:true,name:'Survey'},
-		'_UPDATED_BY':{meta:false},
-		'_UPDATED_DATE':{meta:false},
+		'_UPDATED_BY':{meta:false,name:'Updated By'},
+		'_UPDATED_DATE':{meta:false,name:'Updated Date'},
 		'BRANCH':{meta:true,name:'Branch'},
 		'SECTION':{meta:true,name:'Section'},
 		'SAMPLE':{meta:true,name:'Sample'},
@@ -374,7 +374,11 @@ var main = {
 				
 				for(var y in dataMap.header){
 					if(y != 'tableID'){
-						var str = y + ':' + record[y];
+						var str = (typeof dataMap.header[y].name != 'undefined') ?
+								dataMap.header[y].name : y;
+						str += ':';
+						str += (typeof record[y] == 'undefined') ? 'N/A' : record[y];
+						
 						var $div = {};
 						
 						if(orig[y] != record[y] && 
