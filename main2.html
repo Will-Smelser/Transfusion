@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>M.A.P.S.</title>
+
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script> 
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+
+<style>
+html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input,textarea,select{font-size:100%}legend{color:#000}
+
+a {
+	text-decoration: none;
+	color: #fff;
+}
+window{
+	height:100%;
+}
+body,html,#content{
+	font-family:Arial;
+	height:100%;
+	width:100%;
+}
+#content{
+	position:absolute;
+	z-index:1;
+}
+#navigation{
+	position:absolute;
+	position:fixed;
+	top:0px;
+	z-index:10;
+	width:100%;
+	background-color:#AAA;
+	border-bottom:solid #EEA41F 4px;
+}
+#navigation ul, .sub-nav ul{border:none;padding:0px;margin:0px;}
+#navigation li{
+	padding:8px 15px 5px 15px;
+	margin:0px;
+	list-style:none;
+	
+	font-size:14px;
+	font-weight:bold;
+	color:#FFF;
+	
+	display:inline-block;
+	cursor:pointer;
+}
+#navigation li.active{
+	background-color:#EEA41F;
+}
+#navigation li:hover{
+	/*background-color:#EEA41F;*/
+}
+#map-container,#login-container,#pending-container, #mselect-container{
+	width:100%;
+	height:100%;
+	margin:0px;
+}
+
+/*sub navigations*/
+.sub-nav ul{
+	padding-top:40px;
+	background-color:#EEA41F;
+}
+.sub-nav li{
+	padding:3px 8px;
+	margin:2px 0px 4px 4px;
+	list-style:none;
+	
+	font-size:8px;
+	font-weight:bold;
+	color:#FFF;
+	
+	display:inline-block;
+	cursor:pointer;
+}
+.sub-nav li.active{
+	background-color:#333;
+}
+
+/*form stuff*/
+.inner{
+	padding:0px;
+}
+form .title{
+	font-weight:bold;
+	font-size:12px;
+	color:#EEA41F;
+	padding:0px;
+	margin:0px;
+	line-height:16px;
+	width:auto;
+}
+form .dropdown{
+	font-weight:bold;
+	font-size:12px;
+	color:#000000;
+	padding:5px;
+	margin:0px;
+	line-height:16px;
+	width:125px;
+}
+input, select{
+	font-size:14px;
+	color:#FFF;
+	background-color:#AAA;
+	border:none;
+	font-weight:bold;
+	width:135px;
+	padding:5px;
+	
+}
+.round{
+	border-radius:3px;
+	-moz-border-radius:3px;
+}
+input.btn{
+	padding:4px;
+	font-size:12px;
+	font-weight:bold;
+	color:#FFF;
+	background-color:#333;
+	border:solid #333 2px;
+	cursor:pointer;
+}
+input.btn:hover{
+	border-top:solid #555 2px;
+	border-left:solid #555 2px;
+	border-bottom:solid #000 2px;
+	border-right:solid #000 2px;
+	background-color:#555;
+}
+#data-data-form li{
+	padding:0px 0px 8px 0px;
+}
+#data-data-form input, select{
+	width:75px;
+	margin-right:8px;
+}
+#data-data-form select{
+	width:150px;
+}
+.grad-grey{
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(#222));
+	background-image: -webkit-linear-gradient(top, #CCC, #222); 
+	background-image: -moz-linear-gradient(top, #CCC, #222);
+	background-image: -ms-linear-gradient(top, #CCC, #222);
+	background-image: -o-linear-gradient(top, #CCC, #222);
+}
+
+.infoWindow input{
+	margin-top:10px;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	cursor:pointer;
+	
+	border-right:solid transparent 2px;
+	border-bottom:solid transparent 2px;
+	
+	font-size:12px;
+}
+.infoWindow input:hover{
+	border-right:solid black 2px;
+	border-bottom:solid black 2px;
+}
+
+/* PENDING CHANGES PAGE */
+#pending-container .btn{
+	width:auto;
+}
+#pending-container{
+	width:500px;
+	margin-left:auto;
+	margin-right:auto;
+	font-size:12px;
+}
+#pending-container-inner{
+	padding-bottom:15px;
+}
+#pending-container-inner input{
+	margin:0px;
+	padding:0px;
+	margin-right:10px;
+	width:20px;
+	height:15px;
+}
+#pending-container-inner .wrapper{
+	padding-top:15px;
+}
+#pending-container-inner .head{
+	font-weight:bold;
+}
+#pending-container-inner .header{
+	border-top:solid #EEA41F 2px;
+	border-bottom:solid #000 2px;
+}
+#pending-container-inner .header .child{
+	width:160px;
+	display:inline-block;
+	float:left;
+	overflow:hidden;
+	border:solid transparent 1px;
+}
+#pending-container-inner .body .child{
+	width:160px;
+	display:inline-block;
+	float:left;
+	overflow:hidden;
+	padding-top:10px;
+	border:solid transparent 1px;
+}
+#pending-container-inner .diff{
+	background-color:#CCC;
+	cursor:pointer;
+}
+#mapselect{
+	width:auto;
+}
+#data-header li{
+	display:inline-block;
+	text-align:center;
+	font-size:14px;
+}
+
+#pending-msg, #data-msg{
+	max-height:100px;
+	overflow:auto;
+}
+.error, .good{
+	font-weight:bold;
+	font-size:12px;
+	font-family:arial;
+	color:#FFF;
+	border-radius:5px;
+	padding:3px;
+	margin-bottom:10px;
+}
+.error{
+	background-color:#F0805D;
+	border:solid #F24611 1px;
+}
+.good{
+	background-color:#A9ED8A;
+	border:solid #71BD4D 1px;
+}
+#window-data{
+	font-size:12px;
+	color:#333;
+}
+#window-data .title{
+	display:inline-block;
+	width:65px;
+}
+li#map-name{
+	float:right;
+	padding-right:90px;
+	background-image:url('logo-small.png');
+	background-position:top right;
+	background-repeat:no-repeat;
+	cursor:default;
+}
+body{
+	background-image: url('logo-nobg.png');
+	background-repeat: no-repeat;
+	background-position:center center;
+}
+</style>
+
+</head>
+<body>
+<div id="navigation" class="">
+	<ul>
+		<li id="mselect">Map Select</li><li id="map" class="active">Map</li><li id="data">Data Sheet</li><li id="pending">Pending Changes</li><li id="images">Images</li><li id="login"><a>Login/Logout</a></li>
+		<li id="map-name" class="ignore">&nbsp;</li>
+	</ul>	
+</div>
+<div id="content" style="width:100%;height:100%">
+	<div id="map-container" style="padding-top:0px;height:100%;width:100%;overflow:hidden;">
+		<div id="map-sub-container" style="margin-top:35px;height:100%;width:100%"></div>
+	</div>
+	<div class="inner" id="mselect-container" style="display:none;">
+		<div style="margin:0px auto;padding-top:40px;max-width:400px;">
+			<form name="drop_list">
+				<div class="title">LOCATIONS</div>
+				<select name ="mapselect" id="mapselect" class="dropdown">
+				</select>
+				
+			</form>
+		</div>
+	</div> 
+	<div id="images-container" style="display:none;">
+		<div style="padding-top:40px">
+			<iframe style="min-height:400px;width:100%;height:99%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
+		</div>
+	</div>
+	<div id="data-container" style="display:none;">
+		<div class="inner" id="data-container" style="margin:40px auto 0px auto;max-width:600px;">
+			<div id="data-msg"></div>
+			<form id="data-form">
+				<input type="hidden" name="LineID" id="LineID" value="" />
+				<input type="hidden" name="UPDATED_BY" id="UPDATED_BY" value="" />
+				<input type="hidden" name="UPDATED_DATE" id="UPDATED_DATE" value="" />
+				<input type="hidden" name="tableID" id="tableID" value=""/>
+				<input type="hidden" name="inspector" id="inspector" />
+				
+				<div style="float:left;width:50%">
+					<div class="title">BRANCH NAME</div>
+					<input class="round" type="text" name="BRANCH" id="BRANCH" />
+					
+					<div class="title">SECTION</div>
+					<input class="round" type="text" name="SECTION" id="SECTION" />
+					
+					<div class="title">SAMPLE NUMBER</div>
+					<input class="round" type="text" name="SAMPLE" id="SAMPLE" />
+					
+					<div class="title">PCI</div>
+					<input class="round" type="text" name="BRANCH" id="BRANCH" />
+					
+					<div class="title">SURVEY</div>
+					<input class="round" type="text" name="SURVEY" id="SURVEY" />
+					
+				</div>
+				
+				<div style="float:right;width:50%">
+
+					<div class="title">FROM</div>
+					<input class="round" type="text" name="_FROM" id="_FROM" />
+					
+					<div class="title">TO</div>
+					<input class="round" type="text" name="_TO" id="_TO" />
+					
+					<div class="title">SECTION WIDTH</div>
+					<input class="round" type="text" name="sectionwidth" id="WIDTH" />
+					
+					<div class="title">SECTION HEIGHT</div>
+					<input class="round" type="text" name="sectionheight" id="LENGTH" />
+					
+					<div class="title">DATE INSPECTED</div>
+					<input class="round" type="text" name="dateinspected" id="UPDATED_DATE" />
+				</div>
+				<div style="clear:both"></div>
+			
+				<div style="margin:10px auto 0px auto;max-width:600px">
+				<ul id="data-header">
+					<li style="width:155px;"><div class="title">DATA</div></li>
+					<li style="width:85px;">High</li>
+					<li style="width:85px;">Medium</li>
+					<li style="width:85px;">Low</li>
+				</ul>
+				<div id="data-data-form">
+					<ul id="data-data-elements"></ul>
+					<input id="data-data-add" type="button" class="round btn" style="width:auto;" value="Add Entry +" />
+					<input id="data-data-save" type="button" class="round btn save" style="width:auto;" value="Save" />
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+	<div class="inner" id="login-container" style="display:none;">
+		<div style="margin:0px auto;max-width:400px;padding-top:40px;">
+			<div id="login-msg" style="display:none"></div>
+			<form id="login-form">
+				<div class="title">EMAIL</div>
+				<input class="round" type="text" name="username" />
+				
+				<div class="title">PASSWORD</div>
+				<input class="round" type="password" name="password" id="password" />
+				
+				<div style="margin-top:8px;">
+					<input type="button" value="Login" id="login-form-button" class="round btn" />
+				</div>
+			</form>
+			<form id="logout-form" style="display:none;">
+				<input type="button" value="Logout" id="logout-form-button" class="round btn" />
+			</form>
+		</div>
+	</div>
+	<div class="inner" id="pending-container" style="display:none;">
+		<div style="padding-top:40px;">
+		<div id="pending-msg" style="display:none"></div>
+		<div id="pending-container-inner"></div>
+		<input type="button" class="round btn" value="Push Selected" id="pending-push" />
+		<input type="button" class="round btn" value="Delete Selected" id="pending-delete" />
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="main2.js"></script> 
+
+</body>
+</html>

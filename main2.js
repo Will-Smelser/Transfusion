@@ -1,300 +1,127 @@
 
 
-/** @classDescription This is the data map used when a user decides to edit data */
+/**
+ * This is the datamap used when a user decides to edit data
+ */
 var dataMap = {
-		/** 
-		 * Each attribute has 2 options: meta, name
-		 * <br/>&nbsp;&nbsp;&nbsp;meta - boolean True to be displayed on window popup.
-		 * <br/>&nbsp;&nbsp;&nbsp;name - string Name to be displayed on window popup.
-		 * @class 
-		 */
 		header : {
-			/** 
-			 * The unique line id.
-			 */
-			LineID:{
-				/** True to show in map pop-up, False otherwise */
-				meta:false},
-			/** 
-			 * FROM
-			 */
-			FROM_:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'From'},
-			/** TO */
-			TO_:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'To'},
-			/** WIDTH */
-			WIDTH:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'Width'},
-			/** LENGTH */
-			LENGTH:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'Length'},
-			/** SURVEY */
-			SURVEY:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'Survey'},
-			/** UPDATED_BY */
-			UPDATED_BY_:{
-				/** True to show in map pop-up, False otherwise */
-				meta:false,
-				/** The display name for forms */
-				name:'Updated By'},
-			/** UPDATED_DATE */
-			UPDATED_DATE_:{
-				/** True to show in map pop-up, False otherwise */
-				meta:false,
-				/** The display name for forms */
-				name:'Updated Date'},
-			/** BRANCH */
-			BRANCH:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'Branch'},
-			/** SECTION */
-			SECTION:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'Section'},
-			/** SAMPLE */
-			SAMPLE:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'Sample'},
-			/** PCI */
-			PCI:{
-				/** True to show in map pop-up, False otherwise */
-				meta:true,
-				/** The display name for forms */
-				name:'PCI'},
-			//'geometry':'',
-			//'COMMENT':'',
-			/** tableID */
-			tableID:{
-				/** True to show in map pop-up, False otherwise */
-				meta:false}
+		'LineID':{meta:false},
+		'_FROM':{meta:true,name:'From'},
+		'_TO':{meta:true,name:'To'},
+		'WIDTH':{meta:true,name:'Width'},
+		'LENGTH':{meta:true,name:'Length'},
+		'SURVEY':{meta:true,name:'Survey'},
+		'_UPDATED_BY':{meta:false,name:'Updated By'},
+		'_UPDATED_DATE':{meta:false,name:'Updated Date'},
+		'BRANCH':{meta:true,name:'Branch'},
+		'SECTION':{meta:true,name:'Section'},
+		'SAMPLE':{meta:true,name:'Sample'},
+		'PCI':{meta:true,name:'PCI'},
+		//'geometry':'',
+		//'COMMENT':'',
+		'tableID':{meta:false}
 		},
-		/**
-		 * The data entries options for field engineers
-		 * @class
-		 */
+		images : {
+		'SITE_IMAGE_1':'',
+		'SITE_IMAGE_2':'',
+		'SITE_IMAGE_3':'',
+		},
 		data : {
-			/** ALLIGATORING */
-			ALLIG : {
-				/** The code value for option */
+			'ALLIG' : {
 				code : 1,
-				/** The display name for option */
 				name : 'Alligator Cracking'
 			},
-			/** BLEEDING */
-			BLEED : {
-				/** The code value for option */
+			'BLEED' : {
 				code : 2,
-				/** The display name for option */
 				name : 'Bleeding'
 			},
-			/** BLOCK CRACKING */
-			BLOCK : {
-				/** The code value for option */
+			'BLOCK' : {
 				code : 3,
-				/** The display name for option */
 				name : 'Block Cracking'
 			},
-			/** BUMP AND SAGS */
-			BUMP : {
-				/** The code value for option */
+			'BUMP' : {
 				code : 4,
-				/** The display name for option */
 				name : 'Bumps and Sags'
 			},
-			/** CORRUGATION */
-			CORRU : {
-				/** The code value for option */
+			'CORRU' : {
 				code : 5,
-				/** The display name for option */
 				name : 'Corrugation',
 			},
-			/** DEPRESSIONS */
-			DEPRE : {
-				/** The code value for option */
+			'DEPRE' : {
 				code : 6,
-				/** The display name for option */
 				name : 'Depression',
 			},
-			/** EDGE CRACKING */
-			EDGE : {
-				/** The code value for option */
+			'EDGE' : {
 				code : 7,
-				/** The display name for option */
 				name : 'Edge Cracking',
 			},
-			/** JT REFLECTION CRACKING */
-			REFLE : {
-				/** The code value for option */
+			'REFLE' : {
 				code : 8,
-				/** The display name for option */
 				name : 'Jt. Reflection Cracking'
 			},
-			/** LANE/SHOULDER DROP OFF */
-			LANE : {
-				/** The code value for option */
+			'LANE' : {
 				code : 9,
-				/** The display name for option */
 				name : 'Lane/Shoulder Drop Off'
 			},
-			/** LONG and TRANS CRACKING */
-			LONG : {
-				/** The code value for option */
+			'LONG' : {
 				code : 10,
-				/** The display name for option */
 				name : 'Long &amp; Trans Cracking'
 			},
-			/** PATCH and UTIL CUT PATCHING */
-			PATCH : {
-				/** The code value for option */
+			'PATCH' : {
 				code : 11,
-				/** The display name for option */
 				name : 'Patch &amp; Util Cut Patching'
 			},
-			/** POLISHED AGGREGATE */
-			POLIS : {
-				/** The code value for option */
+			'POLIS' : {
 				code : 12,
-				/** The display name for option */
 				name : 'Polished Aggregate'
 			},
-			/** POTHOLES COUNT */
-			POTHO : {
-				/** The code value for option */
+			'POTHO' : {
 				code : 13,
-				/** The display name for option */
 				name : 'Potholes Count',
 			},
-			/** RAILROAD CROSSING */
-			BRCRO : {
-				/** The code value for option */
+			'BRCRO' : {
 				code : 14,
-				/** The display name for option */
 				name : 'Railroad Crossing'
 			},
-			/** RUTTING */
-			RUTT : {
-				/** The code value for option */
+			'RUTT' : {
 				code : 15,
-				/** The display name for option */
 				name : 'Rutting'
 			},
-			/** SHOVING */
-			SHOV : {
-				/** The code value for option */
+			'SHOV' : {
 				code : 16,
-				/** The display name for option */
 				name : 'Shoving'
 			},
-			/** SLIPAGE CRACKING */
-			SLIP : {
-				/** The code value for option */
+			'SLIP' : {
 				code : 17,
-				/** The display name for option */
 				name : 'Slippage Cracking'
 			},
-			/** SWELL */
-			SWELL : {
-				/** The code value for option */
+			'SWELL' : {
 				code : 18,
-				/** The display name for option */
 				name : 'Swell'
 			},
-			/** WEATHERING/RAVELLING */
-			WEATH : {
-				/** The code value for option */
+			'WEATH' : {
 				code : 19,
-				/** The display name for option */
 				name : 'Weathering/Ravelling'
 			},
 		},
 	};
 	
 /**
- * @classDescription A wrapper for all functions
+ * A wrapper for all functions
  */
 var main = {
-		/** 
-		 * JQuery reference to the navigation 
-		 * @type JQuery
-		 */
+		//reference to the navigation
 		$navs: null,
 		
-		/** 
-		 * Reference to the most recently clicked navigation tab. 
-		 * @type JQuery
-		 */
+		//reference to the most recently clicked
+		//navigation tab
 		$current: null,
 		
-		/**
-		 * Reference to the map container
-		 * @type JQuery
-		 */
 		$mapWrapper: null,
 		
-		/**
-		 * Log errors.  If true error console will be displayed.  Or
-		 * you can append to url '#logger=true'
-		 * @type boolean
-		 */
-		errors : false,
-		
-		/**
-		 * Reference to logger DOM object
-		 * @type JQuery
-		 */
-		$logger : null,
-		
-		/**
-		 * Log Error
-		 * @function
-		 * @param string scope What function error happened in.
-		 * @param string msg The message
-		 */
-		logger:function(scope,msg){
-			if(!main.errors) return;
-			
-			if(typeof msg != 'string') msg = String(msg);
-				
-			main.$logger.append('<div>'+scope+'<div/>');
-			var temp = $(document.createElement('div')).html(msg).css({'color':'red','padding-left':'40px'});
-			main.$logger.append(temp);
-		},
-		
-		/**
-		 * Creates the navigation and binds most events.
-		 * @function
-		 */
+		//called on document load
 		init:function(){
 			var obj = this;
-			
-			if(obj.errors || document.location.href.indexOf('#logger=true') > 0){
-				main.errors = true;
-				main.$logger = $('#log');
-				main.$logger.show();
-			}
-			
 			obj.$navs = $('#navigation li');
 			obj.$current = $('#map');
 			obj.$mapWrapper = $('#map-sub-container');
@@ -325,12 +152,10 @@ var main = {
 				
 			});
 			
-			//bind login tab click event
 			$('#login').click(function(){
 				$('#login-msg').hide();
 			});
 			
-			//bind data tab click
 			$('#data').click(function(){
 				$('#data-msg').hide();
 			});
@@ -340,16 +165,13 @@ var main = {
 				$('#pending-msg').hide();
 				main.htmlShowPendingChanges();
 			});
-			//pending delete event
 			$('#pending-delete').click(function(){
 				main.htmlPendingDelete();
 			});
-			//pending push event
 			$('#pending-push').click(function(){
 				main.htmlPendingPush();
 			});
 
-			//set the login and bind to the login button
 			main.setLogin();
 			$('#login-form-button').click(function(){
 				main.doLogin();
@@ -377,14 +199,8 @@ var main = {
 				.attr('class','round btn')
 				.val('Delete').attr('type','button');
 			
-			//restores state of the application
-			//not fully implamented.  There is more cacheing which could happend
 			obj.restoreState();
 		},
-		/**
-		 * Updates the login form to display correctly.
-		 * @function
-		 */
 		setLogin : function(){
 			if(main.isLoggedIn()){
 				$('#login-form').hide();
@@ -394,42 +210,20 @@ var main = {
 				$('#logout-form').hide();
 			}
 		},
-		/**
-		 * Holds login information returned after login.  Not implamented.
-		 * @param Object
-		 */
 		loginInfo : null,
-		
-		/**
-		 * Check if the login token is set.
-		 * @function
-		 */
 		isLoggedIn : function(){
 			return (typeof sessionStorage.login_token == 'string');
 		},
-		/**
-		 * Perform actual the login.  Called from main.login(). Submits the login for to process.php
-		 * <br/>
-		 * Uses ajax post and receives back a JSON object on success.
-		 * Ajax Return Object:
-		 *    {result:boolean}
-		 * @function
-		 * @see login
-		 */
 		doLogin : function(){
-			//hide the login message
 			$('#login-msg').hide();
-			
-			//perform the ajax post to process.php
 			$.ajax({
 				type: 'POST',
 				url : "process.php?action=login",
 				data : $('#login-form').serialize(),
 				dataType: 'json',
 				
-				//communication success
 				success:function(data){
-					
+					window.X = data;
 					if(data.result){
 						sessionStorage.login_token = data.token;
 						$('#login-form').hide();
@@ -441,17 +235,11 @@ var main = {
 					}
 				},
 				
-				//communication error
 				error:function(){
 					$('#login-msg').attr('class','error').html("Login Failed.").show();
 				}
 			});
 		},
-		/**
-		 * Login.  Bound to the click event of the login button.
-		 * Deprecated.  This is no longer used.  This will send
-		 * user to google login page and get oAuth token.
-		 */
 		login : function(){
 			
 			var temp = window.location.pathname.split('/');
@@ -467,10 +255,6 @@ var main = {
 			});
 			document.location.href=url;
 		},
-		/**
-		 * Clears login information form local data stores.
-		 * @private
-		 */
 		_logout : function(){
 			delete(sessionStorage.login);
 			delete(sessionStorage.loginExpire);
@@ -479,39 +263,20 @@ var main = {
 			$('#login-form').show();
 			$('#logout-form').hide();
 		},
-		/**
-		 * Bound tot he logout button.  Called _logout().
-		 * @see _logout
-		 */
 		logout : function(){
 			main._logout();
 			$('#login-msg').show().attr('class','good').html("Logout Success.");
 		},
-		
-		/**
-		 * Used to create new data drop down lists
-		 * @private
-		 * @type JQuery
-		 */
+		//HTML drop down list for data
 		$htmlDD : null,
 		
-		/**
-		 * Used to create new data delete buttons.
-		 * @private
-		 * @type JQuery
-		 */
+		//delete button for data
 		$htmlDelete : null,
 		
-		/**
-		 * Reference to HTML drop down list for map choices
-		 * @type JQuery
-		 */
+		//HTML drop down list for maps choices
 		$htmlDDmap : $('#mapselect'),
 		
-		/**
-		 * Add a record for input to the data
-		 * @function
-		 */
+		//add a record for input to the data
 		htmlAddRecord : function(){
 			var $ul = $('#data-data-elements');
 			var id = $ul.children().length;
@@ -553,8 +318,8 @@ var main = {
 		},
 		/**
 		 * Used to set the message on data page
-		 * @param {String} msg The message to display
-		 * @param {boolean} error True if this is an error, false otherwise
+		 * @param msg string The message to display
+		 * @param error bool True if this is an error, false otherwise
 		 */
 		_msgData : function(msg,error){
 			var cls = (error) ? 'error' : 'good';
@@ -563,11 +328,11 @@ var main = {
 		
 		/**
 		 * Add a record for data, and set record values
-		 * @param {int} code The corresponding code from dataMap.code
-		 * @param {string} l The low value
-		 * @param {string} m The medium value
-		 * @param {string} h The high value
-		 * @param {boolean} fromFusion If this is a fusion record or local record
+		 * @param code int The corresponding code from dataMap.code
+		 * @param l string The low value
+		 * @param m string The medium value
+		 * @param h string The high value
+		 * @param fromFusion boolean If this is a fusion record or local record
 		 */
 		htmlAddRecordData : function(code,l,m,h, fromFusion){
 			var $li = this.htmlAddRecord();
@@ -586,19 +351,11 @@ var main = {
 			var $cont = $('#pending-container-inner');
 			var $clear = $(document.createElement('div')).attr('style','clear:both');
 			
-			//clear contents
 			$cont.empty();
 			
-			/**
-			 * options for dataMap.data option
-			 * @see dataMap.data
-			 */
 			var opts = ['_L','_M','_H'];
 			
-			//loop over the records
 			for(var tbl in main.localData.records){
-				
-			//loop over the contents of records for given table
 			for(var x in main.localData.records[tbl]){
 				var $cbox = $(document.createElement('input')).attr('type','checkbox').val(tbl+'-'+x).attr('checked','true');
 				var $wrap = $(document.createElement('div')).addClass('wrapper');
@@ -615,7 +372,6 @@ var main = {
 				$head = $(document.createElement('div')).addClass('header');
 				$body = $(document.createElement('div')).addClass('body');
 				
-				//create the header
 				for(var y in dataMap.header){
 					if(y != 'tableID'){
 						var str = (typeof dataMap.header[y].name != 'undefined') ?
@@ -644,16 +400,13 @@ var main = {
 					}
 				}
 				
-				//create the data entries
 				for(var y in dataMap.data){
-					//verify that the record exists
 					if(	(
 						(typeof record[y+'_L'] != 'undefined' && (record[y+'_L'] != '')) ||
 						(typeof record[y+'_M'] != 'undefined' && (record[y+'_M'] != '')) ||
 						(typeof record[y+'_H'] != 'undefined' && (record[y+'_H'] != ''))
 						) 
 					){
-						//add option for each record
 						for(var i in opts){
 							var str = y + opts[i] + ':' + record[y+opts[i]];
 							var $div = {};
@@ -678,7 +431,6 @@ var main = {
 					}
 				}
 				
-				//assembles the HTML to the DOM
 				if($body.html() == '') $body.html('NO DATA');
 				
 				$head.append($clear.clone());
@@ -695,19 +447,10 @@ var main = {
 		},
 		/**
 		 * Private method for get all selected pending elements
-		 * @private
 		 */
 		_getSelectedPending : function(){
 			return $('#pending-container-inner input:checked');
 		},
-		/**
-		 * Makes the request to get schema for specified table.
-		 * Will store the schema locally in main.schema[tableID]
-		 * @private
-		 * @param {String|integer} tableID The fusion table id to get schema for
-		 * @return {boolean|JSON} False on failure or reference to main.schema[tableID]
-		 * @see main.schema
-		 */
 		_setSchema : function(tableID){
 			if(typeof main.schema[tableID] == 'undefined' || main.schema[tableID].length < 1){
 				$.ajax('process.php?action=schema&tableID='+tableID,{
@@ -727,12 +470,6 @@ var main = {
 				return main.schema[tableID];
 			}
 		},
-		/**
-		 * Goes through pendings and looks up table ids and builds the schema
-		 * for those fusion tables Ids.  Calls _checkSchema().
-		 * @private
-		 * @return {void}
-		 */
 		_setAllSchema : function(){
 			
 			var $pendings = main._getSelectedPending();
@@ -749,31 +486,9 @@ var main = {
 			
 			setTimeout(main._checkSchema,100);
 		},
-		/**
-		 * Holds reference to table schemas.  
-		 * JSON structure:
-		 *  {<fusionTableID>:<array of field names>}
-		 * @private
-		 * @type JSON
-		 */
 		_schemaTables : [],
-		/**
-		 * Date.now() value for when first call to _checkSchema() was called.
-		 * @private
-		 * @type integer
-		 */
 		_schemaCheckStart : null,
-		/**
-		 * Called once a _setSchema() is complete.
-		 * @private
-		 * @type Function
-		 */
 		_schemaCallback : function(){},
-		/**
-		 * Called repeatedly with setTimeout.  Waits for timeout (10 seconds) or
-		 * the schema has been loaded.
-		 * @private
-		 */
 		_checkSchema : function(){
 			console.log('checking');
 			
@@ -804,16 +519,12 @@ var main = {
 			main._schemaCallback = main.htmlPendingPushFinish;
 			main._setAllSchema();
 		},
-		/**
-		 * Once the schema check is done, this method is called.
-		 */
 		htmlPendingPushFinish : function(){
 			
 			var $pendings = main._getSelectedPending();
 			//var base = "https://www.google.com/fusiontables/api/query?sql=";
 			var base = "process.php?action=update";
 			
-			//loop over all pending records
 			$pendings.each(function(){
 				var parts = $(this).val().split('-');
 				var tbl = parts[0];
@@ -824,14 +535,10 @@ var main = {
 				
 				var temp = {};
 				
-				//the schema is not an associative array
-				//currently this is a hack so simple check
-				//for field name does exist.
 				for(var x in main.schema[tbl]){
 					temp[main.schema[tbl][x]] = 0;
 				}
 				
-				//build the update portion of the fusoin query
 				for(var x in entry){
 					if( x != "FROM" && x != "TO" && x !="WHERE" ){
 						
@@ -863,14 +570,13 @@ var main = {
 				sql = sql.substr(0,sql.length-1);//remove comma
 				
 				//sql += "%20WHERE%20LineID=" + entry.LineID;
-				
+				console.log(sql);
 				if(sql == ""){
 					main._msgPush("No valid fields to update (Error 002a).  Skipped("+
 							x+" in "+tbl+", "+line+")", true, true);
 					return;
 				}
 				
-				//send the query
 				$.ajax(base,{
 						data:{
 							query:sql,
@@ -913,10 +619,9 @@ var main = {
 		},
 		/**
 		 * Used to set the message on push page
-		 * @param {string} msg The message to display
-		 * @param {boolean} error True if this is an error, false otherwise
-		 * @param {boolean} [optional] Default is false. True to append to msgbox
-		 * @private
+		 * @param msg string The message to display
+		 * @param error bool True if this is an error, false otherwise
+		 * @param append bool [optional] Default is false. True to append to msgbox
 		 */
 		_msgPush : function(msg,error,append){
 			var cls = (error) ? 'error' : 'good';
@@ -935,10 +640,6 @@ var main = {
 				$('#pending-msg').attr('class',cls).show().html(msg);
 			}
 		},
-		/**
-		 * Called when a query was successfully completed.
-		 * @param {JSON} data An object with the data.TableID and data.LineID
-		 */
 		htmlPendingSuccess : function(data){
 			var id = data.tableID + '-' + data.LineID;
 			
@@ -955,7 +656,6 @@ var main = {
 		},
 		/**
 		 * Delete selected pending changes
-		 * @param {string|integer} [optional] id Default value of "*" (delete all). The LineID of the record to be deleted from pendings.
 		 */
 		htmlPendingDelete : function(id){
 			var $pendings = main._getSelectedPending();
@@ -985,7 +685,7 @@ var main = {
 		
 		/**
 		 * Remove an HTML entry from data list
-		 * @param {integer} id the unique id for the element
+		 * @param id Int the unique id for the element
 		 * @TO-DO When you delete an element, the "missing data" will not be shown in the diff
 		 */
 		htmlRemoveRecord : function(id){
@@ -1001,14 +701,12 @@ var main = {
 		
 		/**
 		 * Private object for holding id=>field_name of dataMap.data object.
-		 * @private
 		 */
 		_cacheCrackById : {},
 		
 		/**
 		 * Get the crack type drop down list id value to fusion map field name
 		 * @param id Integer Id of the dataMap.data.<field name>.id
-		 * @private
 		 */
 		_getCrackTypeById : function(id){
 			if(typeof this._cacheCrackById.length == 'undefined'){
@@ -1020,7 +718,7 @@ var main = {
 		},
 		/**
 		 * Get the current information about data
-		 * @return {JSON} <field name>:<value>...
+		 * @return JSON {<field name>:<value>...}
 		 * @see dataMap object
 		 */
 		 getCurrentData : function(){
@@ -1075,10 +773,6 @@ var main = {
 		 *   + Order list based on closest to lat and lgt given
 		 * - If lat undefined
 		 *   + Order based on however fusion tables returns query
-		 *   
-		 *   @param {integer} lat The latitude
-		 *   @param {integer} lgt The longitude
-		 *   @param {function} callback Callback to be executed after map has been initialized
 		 */
 		initHtmlMapOptions : function(lat,lgt,callback){	
 		
@@ -1190,20 +884,14 @@ var main = {
 		
 		/**
 		 * This is a local data store for this session
-		 * @class
 		 */
 		sessionData : {
-			/**
-			 * The last clicked nav element.
-			 * @type JQuery
-			 */
 			navActive : null,
 		},
 		
 		/**
 		 * Data is stored in this object
 		 * Used by the froms for before push
-		 * @class
 		 */
 		localData : {
 			/**
@@ -1223,7 +911,6 @@ var main = {
 		/**
 		 * Holds the table schema to avoid update errors.
 		 * schema[<tableId>][<field1>,<field2>,...];
-		 * @class
 		 */
 		schema : {},
 		/**
@@ -1237,21 +924,19 @@ var main = {
 		},
 		/**
 		 * Holds google marker object representing users position
-		 * @type google.maps.Marker
 		 */
 		marker : null,
 		
 		/**
 		 * The max distance marker should be from closest position
 		 * and still center map to the user
-		 * @type integer The distance in miles
 		 */
 		maxMarkerDist : 10, //miles
 		
 		/**
 		 * This is the callback function for setting location for
 		 * user on the map.
-		 * @param {google.maps.LatLng} position The system position returned
+		 * @param position The system position returned
 		 * @see initLocation() Scope of this function
 		 * @see watchLocation() Called at end.
 		 * @see http://www.w3.org/TR/geolocation-API/#geolocation_interface
@@ -1268,7 +953,6 @@ var main = {
 					
 					if(fusionId != 0) main.initFusionLayer(fusionId);
 					
-					//set the map name in toolbar
 					$('#map-name').html($ddList.html());
 					
 					//check the distance and determine if there is a reason to locate map
@@ -1281,10 +965,8 @@ var main = {
 					
 					var loc = new google.maps.LatLng(lat,lgt);
 					
-					var img = new google.maps.MarkerImage('images/ml-2.png');
-					
 					main.marker = new google.maps.Marker({
-						draggable:false,clickable:false,position:loc,icon:img
+						draggable:false,clickable:false,position:loc
 					});
 					
 					main.marker.setMap(main.map);
@@ -1299,11 +981,11 @@ var main = {
 		},
 		/**
 		 * Calculate the length between 2 points given lat and long
-		 * @param {float} lat1 First points latitude
-		 * @param {float} lon1 First points longitude
-		 * @param {float} lat2 Second points latitude
-		 * @param {float} lon2 Second points longitude
-		 * @return {float} The arc distance between 2 given points on the globe.
+		 * @param lat1 float First points latitude
+		 * @param lon1 float First points longitude
+		 * @param lat1 float Second points latitude
+		 * @param lon1 flaot Second points longitude
+		 * @return float The arc distance between 2 given points
 		 */
 		distanceBetweenPoints : function(lat1,lon1,lat2,lon2){
 			var R = 3963; // miles
@@ -1324,46 +1006,19 @@ var main = {
 		 * @see setLocationCallback() Scope of this funcitno
 		 */
 		watchLocation : function(){
-			main.logger('watchLocation','Start');
-			navigator.geolocation.watchPosition(
-				main.updatePosition, 
-			    main.getLocationFailed,
-			    {enableHighAccuracy:true, maximumAge:5000, timeout:15000}
-			);
-			main.logger('watchLocation','Complete');
-		},
-		
-		/**
-		 * updates the users position, called from watchLocation
-		 * @param Object position
-		 * @see http://dev.w3.org/geo/api/spec-source.html#watch-position
-		 * @see watchLocation
-		 */
-		updatePosition : function(position){
-			main.logger('updatePosition','Called');
-			try{
+			navigator.geolocation.watchPosition(function(position){
 				var lat = position.coords.latitude;
 				var lgt = position.coords.longitude;
-				
-				main.logger('updatePosition','position: '+lat+','+lgt);
-				
 				var loc = new google.maps.LatLng(lat,lgt);
 				main.marker.setPosition(loc);
-			}catch(err){
-				main.logger('updatePosition',err);
-			}
+			}, main.getLocationFailed);
 		},
 		/**
 		 * Handles errors from attempting to find user location.
-		 * @param {PositionError} error Native error thrown by browser on Geolocation.getCurrentPosition() error.
 		 * @see watchLocation()
 		 * @see initLocation()
-		 * @see http://www.w3.org/TR/geolocation-API/#position-error
-		 * @see http://www.w3.org/TR/geolocation-API/#geolocation_interface
 		 */
 		getLocationFailed : function(error){
-			main.logger('getLocationFailed',error.code);
-			main.logger('getLocationFailed',error.message);
 			
 			switch(error.code)  
             {  
@@ -1386,30 +1041,25 @@ var main = {
 		},
 		/**
 		 * The google map
-		 * @type google.maps.Map
 		 */
 		map:null,        //the google map
 		
 		/**
 		 * Currently loaded fusion table
-		 * @type google.maps.FusionTablesLayer
 		 */
 		fusion:null,     //the fusion layer
 		
 		/**
 		 * Customized popup window
-		 * @type google.maps.InfoWindow
 		 */
 		mapWindow:null, //the popup window in map
 		
 		/**
 		 * Initializes the google map.
+		 * @TO-DO Set the initial locaiton to headquarters
 		 */
 		initMap : function(){
-			main.logger('initMap','start');
-			
-			try{
-			//initialized to TransMap headquarters
+			//var city = new google.maps.LatLng(42.8576698303223,-106.267807006836);
 			var city = new google.maps.LatLng(40.021951,-83.092109);
 			
 			this.map = new google.maps.Map(main.$mapWrapper[0], {
@@ -1420,7 +1070,7 @@ var main = {
 				streetViewControl: false,			  
 			});
 			
-			var img = new google.maps.MarkerImage('images/logo-small.png');
+			var img = new google.maps.MarkerImage('logo-small.png');
 			
 			worldHeadQuarters = new google.maps.Marker({
 				draggable:false,clickable:false,position:city,icon:img,title:"World Headquarters"
@@ -1428,28 +1078,21 @@ var main = {
 			
 			worldHeadQuarters.setMap(main.map);
 			
-			}catch(err){
-				main.logger('initMap',err);
-			}
-			main.logger('initMap','Complete.');
 		},
 		
 		/**
-		 * Initialize a Fusion Table Map Layer
-		 * @param {integer} id The unique fusion table id to load
+		 * Initialize a Fusion Table Layer
+		 * @param id Int The unique fusion table id to load
 		 */
 		initFusionLayer : function(id){
 			var obj = this;
 			
-			main.logger('initFusionLayer','Start');
-			
 			try{
 				this.fusion.setMap(null);
 			}catch(e){
-				main.logger('initFusionLayer',e);
+				//do nothing
 			}
 			
-			try{
 			this.fusion = new google.maps.FusionTablesLayer({
 			query: {
 				select: 'geometry',
@@ -1463,20 +1106,10 @@ var main = {
 					}
 				}]
 			});
-			}catch(e){
-				main.logger('initFusionLayer',e);
-			}
 			
-			main.logger('initFusionLayer','Running:<br/> main.fusion.setMap<br/>main.initInfoWindow()<br/>main.initFusionClickEvent()');
-			
-			try{
 			main.fusion.setMap(main.map);
 			main.initInfoWindow();
 			main.initFusionClickEvent();
-			}catch(e){
-				main.logger('initFusionLayer',e);
-			}
-			main.logger('initFusionLayer','Complete');
 		},
 		
 		/**
@@ -1484,135 +1117,91 @@ var main = {
 		 * @see mapWindow
 		 */
 		initInfoWindow : function(){
-			main.logger('initInfoWindow','start');
-			try{
-				this.mapWindow = new google.maps.InfoWindow({
-					content:"<div id='infoWindow'><h2>Information</h2><div id='window-data'></div><br/><input id='EditPoint' type='button' value='Edit'/></div>"
-				});
-			}catch(e){
-				main.logger('initInfoWindow',e);
-			}
-			
-			main.logger('initInfoWindow','Complete');
+			this.mapWindow = new google.maps.InfoWindow({
+				content:"<h2>Information</h2><div id='window-data'></div><br/><input id='EditPoint' type='button' value='Edit'/>"
+			});
 		},
-		/**
-		 * Updates the info window with meta data about point of interest clicked on.  Loops
-		 * through the dataMap.header looking for keys in the data parameter.
-		 * @param {JSON} data The meta data values.  
-		 */
 		updateInfoWindow : function(data){
-			main.logger('updateInfoWindow','start');
+			var $rep = $('#window-data');
 			
-			try{
-				var $rep = $('#window-data');
-				
-				for(var x in dataMap.header){
-					if(dataMap.header[x].meta 
-								&& typeof data[x] != 'undefined'){
-						if(typeof data[x] == 'object'){
-							$rep.append('<span class="title">'+dataMap.header[x].name+'</span>: '+data[x].value+'<br/>');
-						} else {
-							$rep.append('<span class="title">'+dataMap.header[x].name+'</span>: '+data[x]+'<br/>');
-						}
-					}
-				}
-				
-				//build the image links
-				var image = "IMAGE";
-				if(data[image]){
-					var a = $(document.createElement('a'));
-					a.html('View Images');
-					if(typeof data[image] == 'object'){
-						a.click(function(){
-							main.$navs.filter('#images').click();
-							$('#imageFrame').attr('src',data[image].value);
-						});
+			for(var x in dataMap.header){
+				if(dataMap.header[x].meta 
+							&& typeof data[x] != 'undefined'){
+					if(typeof data[x] == 'object'){
+						$rep.append('<span class="title">'+dataMap.header[x].name+'</span>: '+data[x].value+'<br/>');
 					} else {
-						a.click(function(){
-							main.$navs.filter('#images').click();
-							$('#imageFrame').attr('src',data[image]);
-						});
+						$rep.append('<span class="title">'+dataMap.header[x].name+'</span>: '+data[x]+'<br/>');
 					}
-					$rep.append(a);
-				}else{
-					main.logger('updateInfoWindow','No image<br>'+data[image]);
 				}
-			}catch(e){
-				main.logger('updateInfoWindow',e);
 			}
-			main.logger('updateInfoWindow','complete');
+			var image = "IMAGE";
+			if(data[image]){
+				if(typeof data[image] == 'object'){
+					$rep.append("<a onclick='$(\"#image\").click(function(){$(\"\").attr(\"src\",\""+data[image].value+"\");});'>View Images</a>");
+				} else {
+					$rep.append("<a onclick='$(\"#image\").click(function(){$(\"\").attr(\"src\",\""+data[image]+"\");});'>View Images</a>");
+				}
+			}
 		},
 		/**
 		 * Binds the click event for the current fusion table layer
 		 */
 		initFusionClickEvent : function(){
-			main.logger('initFusionClickEvent','start');
-			
 			//bind the click event to fusion layer
 			google.maps.event.addListener(main.fusion, 'click', function(e) {
-				main.logger('initFusionClickEvent','adding fusion layer listener');
+				//fusion tbale id
+				var fid = main.fusion.query.from;
 				
-					//fusion tbale id
-					var fid = main.fusion.query.from;
-					
-					//get data from fusion or local data store if it exists.
-					//pulls from local if it exists, fusion tables otherwise
-					
-					var fromFusion = (typeof main.localData.records[fid] == "undefined"
-							|| typeof main.localData.records[fid][e.row.LineID.value] == "undefined");
-					var data = (fromFusion) ? e.row : main.localData.records[fid][e.row.LineID.value];
-					
-					//set the position of the information window
-					//to the clicked on element
-					main.mapWindow.setPosition(e.latLng);
-					
-					//bind the map window to the map
-					main.mapWindow.open(main.map);
-					
-					//alter the class (for display purposes) and bind a click event
-					$('#infoWindow')
-					.find('#EditPoint').click(function(){
+				//get data from fusion or local data store if it exists.
+				//pulls from local if it exists, fusion tables otherwise
 				
-						main.logger('initFusionClickEvent','Begin bind edit button click');
+				var fromFusion = (typeof main.localData.records[fid] == "undefined"
+						|| typeof main.localData.records[fid][e.row.LineID.value] == "undefined");
+				var data = (fromFusion) ? e.row : main.localData.records[fid][e.row.LineID.value];
+				
+				//set the position of the information window
+				//to the clicked on element
+				main.mapWindow.setPosition(e.latLng);
+				
+				//bind the map window to the map
+				main.mapWindow.open(main.map);
+				
+				//alter the class (for display purposes) and bind a click event
+				$(main.mapWindow.b.f).addClass('infoWindow')
+				.find('#EditPoint').click(function(){
+					//holds the original fusion tables values
+					var orig = {};
+				
+					//clean up the HTML data area
+					main.htmlRemoveAllRecords();
 					
+					//begin data structure
+					if(typeof main.localData.records[fid] == "undefined"){
+						main.localData.records[fid] = {};
+					}
+					if(typeof main.localData.origs[fid] == "undefined"){
+						main.localData.origs[fid] = {};
+					}
+					
+					
+					for(var key in dataMap.header){
 						try{
-						
-						//holds the original fusion tables values
-						var orig = {};
+							var entry = (fromFusion) ? data[key].value : data[key];
+							var field = key;
+							
+							//set the forms value
+							$('#'+field).val(entry);
+							
+							//update original data
+							orig[field] = e.row[key].value;
+						} catch(err){
+							//do nothing
+						}
+					}
 					
-						//clean up the HTML data area
-						main.htmlRemoveAllRecords();
-						
-						//begin data structure
-						if(typeof main.localData.records[fid] == "undefined"){
-							main.localData.records[fid] = {};
-						}
-						if(typeof main.localData.origs[fid] == "undefined"){
-							main.localData.origs[fid] = {};
-						}
-						
-						
-						for(var key in dataMap.header){
-							try{
-								var entry = (fromFusion) ? data[key].value : data[key];
-								var field = key;
-								
-								//set the forms value
-								$('#'+field).val(entry);
-								
-								//update original data
-								orig[field] = e.row[key].value;
-							} catch(err){
-								main.logger('initFusionClickEvent - mapping data',err);
-							}
-						}
-						
-						//set the table id
-						$('#tableID').val(fid);
-						
-						}catch(e){
-							main.logger('initFusionClickEvent - Line 1579',e);
-						}
+					//set the table id
+					$('#tableID').val(fid);
+					
 					//cycle through all fusion table data
 					//and add the records into the HTML
 					for(var key in dataMap.data){
@@ -1632,7 +1221,7 @@ var main = {
 							orig[key+'_H'] = e.row[key+'_H'].value;
 							
 						} catch(err){
-							main.logger('initFusionClickEvent - Line 1600',err);
+							//do nothing
 						}
 					}
 					
@@ -1645,10 +1234,7 @@ var main = {
 					//trigger the data tab and then show data-data sub nav
 					$('#data').click();
 					$('#data-data').click();
-					
 				});
-				
-				main.logger('initFusionClickEvent','Complete');
 				
 				main.updateInfoWindow(data);
 			});

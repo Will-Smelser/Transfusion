@@ -3,271 +3,10 @@
 <head>
 <title>M.A.P.S.</title>
 
+<link rel="stylesheet" type="text/css" href="main.css" /> 
+
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script> 
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
-
-<style>
-html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input,textarea,select{font-size:100%}legend{color:#000}
-
-a {
-	text-decoration: none;
-	color: #fff;
-}
-window{
-	height:100%;
-}
-body,html,#content{
-	font-family:Arial;
-	height:100%;
-	width:100%;
-}
-#content{
-	position:absolute;
-	z-index:1;
-}
-#navigation{
-	position:absolute;
-	position:fixed;
-	top:0px;
-	z-index:10;
-	width:100%;
-	background-color:#AAA;
-	border-bottom:solid #EEA41F 4px;
-}
-#navigation ul, .sub-nav ul{border:none;padding:0px;margin:0px;}
-#navigation li{
-	padding:8px 15px 5px 15px;
-	margin:0px;
-	list-style:none;
-	
-	font-size:14px;
-	font-weight:bold;
-	color:#FFF;
-	
-	display:inline-block;
-	cursor:pointer;
-}
-#navigation li.active{
-	background-color:#EEA41F;
-}
-#navigation li:hover{
-	/*background-color:#EEA41F;*/
-}
-#map-container,#login-container,#pending-container, #mselect-container{
-	width:100%;
-	height:100%;
-	margin:0px;
-}
-
-/*sub navigations*/
-.sub-nav ul{
-	padding-top:40px;
-	background-color:#EEA41F;
-}
-.sub-nav li{
-	padding:3px 8px;
-	margin:2px 0px 4px 4px;
-	list-style:none;
-	
-	font-size:8px;
-	font-weight:bold;
-	color:#FFF;
-	
-	display:inline-block;
-	cursor:pointer;
-}
-.sub-nav li.active{
-	background-color:#333;
-}
-
-/*form stuff*/
-.inner{
-	padding:0px;
-}
-form .title{
-	font-weight:bold;
-	font-size:12px;
-	color:#EEA41F;
-	padding:0px;
-	margin:0px;
-	line-height:16px;
-	width:auto;
-}
-form .dropdown{
-	font-weight:bold;
-	font-size:12px;
-	color:#000000;
-	padding:5px;
-	margin:0px;
-	line-height:16px;
-	width:125px;
-}
-input, select{
-	font-size:14px;
-	color:#FFF;
-	background-color:#AAA;
-	border:none;
-	font-weight:bold;
-	width:135px;
-	padding:5px;
-	
-}
-.round{
-	border-radius:3px;
-	-moz-border-radius:3px;
-}
-input.btn{
-	padding:4px;
-	font-size:12px;
-	font-weight:bold;
-	color:#FFF;
-	background-color:#333;
-	border:solid #333 2px;
-	cursor:pointer;
-}
-input.btn:hover{
-	border-top:solid #555 2px;
-	border-left:solid #555 2px;
-	border-bottom:solid #000 2px;
-	border-right:solid #000 2px;
-	background-color:#555;
-}
-#data-data-form li{
-	padding:0px 0px 8px 0px;
-}
-#data-data-form input, select{
-	width:75px;
-	margin-right:8px;
-}
-#data-data-form select{
-	width:150px;
-}
-.grad-grey{
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(#222));
-	background-image: -webkit-linear-gradient(top, #CCC, #222); 
-	background-image: -moz-linear-gradient(top, #CCC, #222);
-	background-image: -ms-linear-gradient(top, #CCC, #222);
-	background-image: -o-linear-gradient(top, #CCC, #222);
-}
-
-.infoWindow input{
-	margin-top:10px;
-	border-radius:3px;
-	-moz-border-radius:3px;
-	cursor:pointer;
-	
-	border-right:solid transparent 2px;
-	border-bottom:solid transparent 2px;
-	
-	font-size:12px;
-}
-.infoWindow input:hover{
-	border-right:solid black 2px;
-	border-bottom:solid black 2px;
-}
-
-/* PENDING CHANGES PAGE */
-#pending-container .btn{
-	width:auto;
-}
-#pending-container{
-	width:500px;
-	margin-left:auto;
-	margin-right:auto;
-	font-size:12px;
-}
-#pending-container-inner{
-	padding-bottom:15px;
-}
-#pending-container-inner input{
-	margin:0px;
-	padding:0px;
-	margin-right:10px;
-	width:20px;
-	height:15px;
-}
-#pending-container-inner .wrapper{
-	padding-top:15px;
-}
-#pending-container-inner .head{
-	font-weight:bold;
-}
-#pending-container-inner .header{
-	border-top:solid #EEA41F 2px;
-	border-bottom:solid #000 2px;
-}
-#pending-container-inner .header .child{
-	width:160px;
-	display:inline-block;
-	float:left;
-	overflow:hidden;
-	border:solid transparent 1px;
-}
-#pending-container-inner .body .child{
-	width:160px;
-	display:inline-block;
-	float:left;
-	overflow:hidden;
-	padding-top:10px;
-	border:solid transparent 1px;
-}
-#pending-container-inner .diff{
-	background-color:#CCC;
-	cursor:pointer;
-}
-#mapselect{
-	width:auto;
-}
-#data-header li{
-	display:inline-block;
-	text-align:center;
-	font-size:14px;
-}
-
-#pending-msg, #data-msg{
-	max-height:100px;
-	overflow:auto;
-}
-.error, .good{
-	font-weight:bold;
-	font-size:12px;
-	font-family:arial;
-	color:#FFF;
-	border-radius:5px;
-	padding:3px;
-	margin-bottom:10px;
-}
-.error{
-	background-color:#F0805D;
-	border:solid #F24611 1px;
-}
-.good{
-	background-color:#A9ED8A;
-	border:solid #71BD4D 1px;
-}
-#window-data{
-	font-size:12px;
-	color:#333;
-}
-#window-data .title{
-	display:inline-block;
-	width:65px;
-}
-li#map-name{
-	float:right;
-	padding-right:90px;
-	background-image:url('logo-small.png');
-	background-position:top right;
-	background-repeat:no-repeat;
-	cursor:default;
-}
-body{
-	background-image: url('logo-nobg.png');
-	background-repeat: no-repeat;
-	background-position:center center;
-}
-</style>
 
 </head>
 <body>
@@ -292,8 +31,8 @@ body{
 		</div>
 	</div> 
 	<div id="images-container" style="display:none;">
-		<div style="padding-top:40px">
-			<iframe style="min-height:400px;width:100%;height:99%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
+		<div style="padding-top:30px">
+			<iframe id="imageFrame" style="min-height:400px;width:100%;height:95%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
 		</div>
 	</div>
 	<div id="data-container" style="display:none;">
@@ -346,9 +85,9 @@ body{
 				<div style="margin:10px auto 0px auto;max-width:600px">
 				<ul id="data-header">
 					<li style="width:155px;"><div class="title">DATA</div></li>
-					<li style="width:85px;">High</li>
-					<li style="width:85px;">Medium</li>
 					<li style="width:85px;">Low</li>
+					<li style="width:85px;">Medium</li>
+					<li style="width:85px;">High</li>
 				</ul>
 				<div id="data-data-form">
 					<ul id="data-data-elements"></ul>
@@ -378,14 +117,18 @@ body{
 			</form>
 		</div>
 	</div>
-	<div class="inner" id="pending-container" style="display:none;padding-top:40px;">
+	<div class="inner" id="pending-container" style="display:none;">
+		<div style="padding-top:40px;">
 		<div id="pending-msg" style="display:none"></div>
 		<div id="pending-container-inner"></div>
 		<input type="button" class="round btn" value="Push Selected" id="pending-push" />
 		<input type="button" class="round btn" value="Delete Selected" id="pending-delete" />
+		</div>
 	</div>
 </div>
+<div id="log" style="font-size:10px;overflow:auto;z-index:10000;position:fixed;top:60px;right:20px;height:300px;width:200px;background-color:#CCC;border:solid #333 2px;display:none;">
 
+</div>
 <script type="text/javascript" src="main.js"></script> 
 
 </body>
