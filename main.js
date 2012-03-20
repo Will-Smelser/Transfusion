@@ -66,7 +66,7 @@ var dataMap = {
 				/** The display name for forms */
 				name:'Branch'},
 			/** SECTION */
-			SECTION:{
+			SECTIONID:{
 				/** True to show in map pop-up, False otherwise */
 				meta:true,
 				/** The display name for forms */
@@ -235,6 +235,23 @@ var dataMap = {
  * @classDescription A wrapper for all functions
  */
 var main = {
+		
+		login2 : function(){
+
+			var temp = window.location.pathname.split('/');
+			temp.pop();
+			temp = temp.join('/');
+
+
+			var url = 'https://accounts.google.com/o/oauth2/auth' + '?' + $.param({
+				client_id: '835005776639-foc29sd2tkhn7rd5drlgvfgg1f36uj9m.apps.googleusercontent.com',
+				response_type: 'token',
+				redirect_uri: 'http://'+document.domain + temp + '/callback.php',
+				scope: 'https://www.googleapis.com/auth/fusiontables'
+			});
+			document.location.href=url;
+		},
+
 		/** 
 		 * JQuery reference to the navigation 
 		 * @type JQuery
@@ -1281,7 +1298,7 @@ var main = {
 					
 					var loc = new google.maps.LatLng(lat,lgt);
 					
-					var img = new google.maps.MarkerImage('images/ml-2.png');
+					var img = new google.maps.MarkerImage('images/ml.png');
 					
 					main.marker = new google.maps.Marker({
 						draggable:false,clickable:false,position:loc,icon:img
@@ -1533,6 +1550,7 @@ var main = {
 							$('#imageFrame').attr('src',data[image]);
 						});
 					}
+					$('#imageFrame').css({'height':($(window).height()-40)+'px'})
 					$rep.append(a);
 				}else{
 					main.logger('updateInfoWindow','No image<br>'+data[image]);

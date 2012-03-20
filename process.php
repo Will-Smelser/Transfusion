@@ -24,7 +24,7 @@ session_start();
 /**
  * Process the request.
  */
-echo process();
+echo process($_GET['action']);
 
 
 /**
@@ -35,7 +35,7 @@ echo process();
  *     {result:<boolean>}
  */
 function process($action){
-	switch(action){
+	switch($action){
 		/**
 		 * Switch case for determining which action to perform
 		 * @param action $_GET variable.  Epects login, schema, update
@@ -87,7 +87,7 @@ function schema($token, $tableID){
 	 
 	$result = $client->doQuery("DESCRIBE {$tableID}");
 	 
-	if($result && !preg_match('/error/i',$result)){
+	if($result){ //&& !preg_match('/error/i',$result)){
 		//have to parse https://developers.google.com/fusiontables/docs/developers_guide#tableLists
 		$fields = array();
 		$lines = explode("\n",$result);
@@ -126,7 +126,7 @@ function update($token, $table, $lineID){
 	
 	$result = $client->doQuery('UPDATE '.$table.' SET '.$_POST['query'].' WHERE rowid=\''.$ROWID.'\'');
 	
-	if($result && !preg_match('/error/i',$result)){
+	if($result){ //&& !preg_match('/error/i',$result)){
 		echo '{"result":true,"tableID":"'.$table.'","LineID":"'.$lineID.'"}';
 	} else {
 			

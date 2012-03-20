@@ -32,7 +32,7 @@
 	</div> 
 	<div id="images-container" style="display:none;">
 		<div style="padding-top:30px">
-			<iframe id="imageFrame" style="min-height:400px;width:100%;height:95%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
+			<iframe id="imageFrame" style="min-height:400px;width:100%;height:90%;border:none;margin:0px;padding:0px;" src="">Iframes Not Supported</iframe>
 		</div>
 	</div>
 	<div id="data-container" style="display:none;">
@@ -40,23 +40,24 @@
 			<div id="data-msg"></div>
 			<form id="data-form">
 				<input type="hidden" name="LineID" id="LineID" value="" />
-				<input type="hidden" name="UPDATED_BY" id="UPDATED_BY" value="" />
-				<input type="hidden" name="UPDATED_DATE" id="UPDATED_DATE" value="" />
+				<input type="hidden" name="UPDATED_BY_" id="UPDATED_BY_" value="" />
+				
 				<input type="hidden" name="tableID" id="tableID" value=""/>
 				<input type="hidden" name="inspector" id="inspector" />
+				<input type="hidden" name="IMAGE" id="IMAGE" />
 				
 				<div style="float:left;width:50%">
 					<div class="title">BRANCH NAME</div>
 					<input class="round" type="text" name="BRANCH" id="BRANCH" />
 					
 					<div class="title">SECTION</div>
-					<input class="round" type="text" name="SECTION" id="SECTION" />
+					<input class="round" type="text" name="SECTION" id="SECTIONID" />
 					
 					<div class="title">SAMPLE NUMBER</div>
 					<input class="round" type="text" name="SAMPLE" id="SAMPLE" />
 					
 					<div class="title">PCI</div>
-					<input class="round" type="text" name="BRANCH" id="BRANCH" />
+					<input class="round" type="text" name="PCI" id="PCI" />
 					
 					<div class="title">SURVEY</div>
 					<input class="round" type="text" name="SURVEY" id="SURVEY" />
@@ -66,10 +67,10 @@
 				<div style="float:right;width:50%">
 
 					<div class="title">FROM</div>
-					<input class="round" type="text" name="_FROM" id="_FROM" />
+					<input class="round" type="text" name="FROM_" id="FROM_" />
 					
 					<div class="title">TO</div>
-					<input class="round" type="text" name="_TO" id="_TO" />
+					<input class="round" type="text" name="TO_" id="TO_" />
 					
 					<div class="title">SECTION WIDTH</div>
 					<input class="round" type="text" name="sectionwidth" id="WIDTH" />
@@ -78,7 +79,7 @@
 					<input class="round" type="text" name="sectionheight" id="LENGTH" />
 					
 					<div class="title">DATE INSPECTED</div>
-					<input class="round" type="text" name="dateinspected" id="UPDATED_DATE" />
+					<input class="round" type="text" name="dateinspected" id="UPDATED_DATE_" />
 				</div>
 				<div style="clear:both"></div>
 			
@@ -127,7 +128,7 @@
 	</div>
 </div>
 <div id="log" style="font-size:10px;overflow:auto;z-index:10000;position:fixed;top:60px;right:20px;height:300px;width:200px;background-color:#CCC;border:solid #333 2px;display:none;">
-
+<a onclick="main.login2()">Login Test</a><br/>
 </div>
 <script type="text/javascript" src="main.js"></script> 
 
