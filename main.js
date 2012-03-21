@@ -7,6 +7,7 @@ var dataMap = {
 		 * <br/>&nbsp;&nbsp;&nbsp;meta - boolean True to be displayed on window popup.
 		 * <br/>&nbsp;&nbsp;&nbsp;name - string Name to be displayed on window popup.
 		 * @class 
+		 * @see https://developers.google.com/fusiontables/docs/developers_reference#reserved
 		 */
 		header : {
 			/** 
@@ -187,7 +188,7 @@ var dataMap = {
 				name : 'Potholes Count',
 			},
 			/** RAILROAD CROSSING */
-			BRCRO : {
+			RRCRO : {
 				/** The code value for option */
 				code : 14,
 				/** The display name for option */
@@ -235,7 +236,9 @@ var dataMap = {
  * @classDescription A wrapper for all functions
  */
 var main = {
-		
+		/**
+		 * Use this to get permissions granted for a user
+		 */
 		login2 : function(){
 
 			var temp = window.location.pathname.split('/');
@@ -286,8 +289,8 @@ var main = {
 		/**
 		 * Log Error
 		 * @function
-		 * @param string scope What function error happened in.
-		 * @param string msg The message
+		 * @param {string} scope What function error happened in.
+		 * @param {string} msg The message
 		 */
 		logger:function(scope,msg){
 			if(!main.errors) return;
@@ -823,6 +826,7 @@ var main = {
 		},
 		/**
 		 * Once the schema check is done, this method is called.
+		 * @see https://developers.google.com/fusiontables/docs/developers_reference#reserved
 		 */
 		htmlPendingPushFinish : function(){
 			
@@ -848,15 +852,17 @@ var main = {
 					temp[main.schema[tbl][x]] = 0;
 				}
 				
-				//build the update portion of the fusoin query
+				//build the update portion of the fusion query
 				for(var x in entry){
+					//reserved key words
+					//https://developers.google.com/fusiontables/docs/developers_reference#reserved
 					if( x != "FROM" && x != "TO" && x !="WHERE" ){
 						
 						//we have a schema to check against
 						if((typeof main.schema[tbl] != 'undefined' && main.schema[tbl].length > 0)){
 							
 							if(typeof temp[x] != 'undefined'){
-								//console.log("here 2");
+								main.logger('htmlPendingPushFinish','addend update entry for: '+x+'='+entry[x]);
 								
 								sql += '' + x + '=\'' + entry[x] + '\',';
 							} else {
@@ -864,17 +870,22 @@ var main = {
 								//invalid field name
 								main._msgPush("Invalid field name.  Skipped("+
 										x+" in "+tbl+", "+line+")", true, true);
+								main.logger('htmlPendingPushFinish',"Invalid field name.  Skipped("+
+										x+" in "+tbl+", "+line+")")
 							}
 						//no schema
 						} else {
+							main.logger('htmlPendingPushFinish','No schema available.  Updating: '+x+'='+entry[x]);
 							sql += '' + x + '=\'' + entry[x] + '\',';
 						}
 						
 					}else{
-						console.log("bad");
+						
 						//invalid field name
 						main._msgPush("Invalid field name.  Skipped("+
 								x+" in "+tbl+", "+line+")", true, true);
+						
+						main.logger('htmlPendingPushFinish','Invalid field name.  Skipping: '+x);
 					}
 				}
 				sql = sql.substr(0,sql.length-1);//remove comma
@@ -882,6 +893,7 @@ var main = {
 				//sql += "%20WHERE%20LineID=" + entry.LineID;
 				
 				if(sql == ""){
+					main.logger('htmlPendingPushFinish','No fields to update');
 					main._msgPush("No valid fields to update (Error 002a).  Skipped("+
 							x+" in "+tbl+", "+line+")", true, true);
 					return;
@@ -898,6 +910,10 @@ var main = {
 						dataType:'json',
 						success:function(data){
 							if(!data.result){
+								main.logger('htmlPendingPushFinish',
+										'Error performing query.(code,tableID,LineID)<br/>('+
+										data.code+','+data.tableID+','+data.LineID+')'
+										);
 								if(data.code == 401){
 										main._msgPush('Must be logged in (Error 401).',true,true);
 										main.logout();
@@ -916,12 +932,14 @@ var main = {
 									main._msgPush('Unknown error.',true,true);
 								}
 							} else {
+								main.logger('htmlPendingPushFinish','Push was successful.');
 								main._msgPush('Successfully pushed changes ('+
 										data.tableID+','+data.LineID+').',false,true);
 								main.htmlPendingSuccess(data);
 							}
 						},
 						error:function(err){
+							main.logger('htmlPendingPushFinish','Communication error');
 							main._msgPush('Communication Error.',true,true);
 						}
 					}
@@ -964,6 +982,11 @@ var main = {
 			
 			//remove from records to update
 			delete(main.localData.records[data.tableID][data.LineID]);
+			
+			//refresh data
+			$('#window-data').html('Successfully Updated.<br/>Close window to refresh data.');
+			$('#EditPoint').hide();
+			main.initFusionLayer(data.tableID);
 			
 			main.saveState();
 			
@@ -1621,7 +1644,7 @@ var main = {
 								//update original data
 								orig[field] = e.row[key].value;
 							} catch(err){
-								main.logger('initFusionClickEvent - mapping data',err);
+								main.logger('initFusionClickEvent - mapping data(key:'+key+')',err);
 							}
 						}
 						
@@ -1629,7 +1652,7 @@ var main = {
 						$('#tableID').val(fid);
 						
 						}catch(e){
-							main.logger('initFusionClickEvent - Line 1579',e);
+							main.logger('initFusionClickEvent - Line 1649',e);
 						}
 					//cycle through all fusion table data
 					//and add the records into the HTML
@@ -1650,7 +1673,7 @@ var main = {
 							orig[key+'_H'] = e.row[key+'_H'].value;
 							
 						} catch(err){
-							main.logger('initFusionClickEvent - Line 1600',err);
+							main.logger('initFusionClickEvent - (key:'+key+')',err);
 						}
 					}
 					
@@ -1664,7 +1687,7 @@ var main = {
 					$('#data').click();
 					$('#data-data').click();
 					
-				});
+				}).show();
 				
 				main.logger('initFusionClickEvent','Complete');
 				
